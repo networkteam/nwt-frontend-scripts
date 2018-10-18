@@ -15,8 +15,8 @@ module.exports = function(env, args) {
     externals: {
     },
     entry: [
-      './Resources/Private/JavaScript/header.js',
-      './Resources/Private/JavaScript/footer.js',
+      './Resources/Private/Javascript/header.js',
+      './Resources/Private/Javascript/footer.js',
       './Resources/Private/Sass/main.scss'
     ],
     output: {
@@ -25,7 +25,7 @@ module.exports = function(env, args) {
     },
     resolve: {
       alias: {
-        jsComponents: `${basePackagePathAbsolute()}/Resources/Private/JavaScript`,
+        jsComponents: `${basePackagePathAbsolute()}/Resources/Private/Javascript`,
         baseStyles: `${basePackagePathAbsolute()}/Resources/Private/Scss`
       },
       modules: [
@@ -57,13 +57,13 @@ module.exports = function(env, args) {
               loader: require.resolve('eslint-loader')
             }
           ],
-          include: path.resolve('./Resources/Private/JavaScript')
+          include: path.resolve('./Resources/Private/Javascript')
         },
         {
           test: /\.js?$/,
           include: [
-            path.resolve('./Resources/Private/JavaScript'),
-            path.resolve(`${basePackagePathAbsolute()}/Resources/Private/JavaScript/`)
+            path.resolve('./Resources/Private/Javascript'),
+            path.resolve(`${basePackagePathAbsolute()}/Resources/Private/Javascript/`)
           ],
           exclude: /node_modules/,
           loader: require.resolve('babel-loader'),
