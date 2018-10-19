@@ -13,6 +13,7 @@ module.exports = function(env, args) {
       maxEntrypointSize: 350000
     },
     externals: {
+      jquery: 'jQuery'
     },
     entry: {
       header: './Resources/Private/Javascript/header.js',
@@ -26,8 +27,9 @@ module.exports = function(env, args) {
     },
     resolve: {
       alias: {
-        jsComponents: `${basePackagePathAbsolute()}/Resources/Private/Javascript`,
-        baseStyles: `${basePackagePathAbsolute()}/Resources/Private/Scss`
+        baseJavascript: `${basePackagePathAbsolute()}/Resources/Private/Javascript`,
+        baseStyles: `${basePackagePathAbsolute()}/Resources/Private/Scss`,
+        neosRoot: path.resolve(process.cwd(), '../../')
       },
       modules: [
         path.resolve('./node_modules'),

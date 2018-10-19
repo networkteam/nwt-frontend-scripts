@@ -4,6 +4,8 @@
 
 const chalk = require('chalk');
 const fs = require('fs-extra');
+const path = require('path');
+const merge = require('webpack-merge');
 
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const clearConsole = require('react-dev-utils/clearConsole');
@@ -24,6 +26,9 @@ const buildPath = './Resources/Public/Dist';
 const script = process.argv[2];
 const argv = require('minimist')(process.argv.slice(3));
 
+const hasOwnConfig = fs.existsSync(path.resolve(process.cwd(), 'webpack.js'))
+const customConfiguration = hasOwnConfig ? require(path.resolve(process.cwd(), 'webpack.js')) : null;
+
 switch (script) {
   case 'dev':
     processBuild(script);
@@ -38,16 +43,21 @@ switch (script) {
     processWatch('dev');
     break;
   default:
-    console.error(`Unknown environment "${script}", expected "dev", "prod" or "analyze"`);
+    console.error(`Unknown environment "${script}", expected "dev" or "prod"`);
     process.exit(1);
 }
 
 function processBuild(environment) {
-  measureFileSizesBeforeBuild(buildPath)
+  const webpackBuildPath = hasOwnConfig
+    && customConfiguration(environment, argv).output
+    && customConfiguration(environment, argv).output.path
+    || buildPath;
+
+  measureFileSizesBeforeBuild(webpackBuildPath)
     .then(previousFileSizes => {
       // Remove all content but keep the directory so that
       // if you're in it, you don't end up in Trash
-      fs.emptyDirSync(buildPath);
+      fs.emptyDirSync(webpackBuildPath);
 
       // Start the webpack build
       return build(environment, previousFileSizes);
@@ -75,7 +85,7 @@ function processBuild(environment) {
         printFileSizesAfterBuild(
           stats,
           previousFileSizes,
-          buildPath,
+          webpackBuildPath,
           WARN_AFTER_BUNDLE_GZIP_SIZE,
           WARN_AFTER_CHUNK_GZIP_SIZE
         );
@@ -95,12 +105,19 @@ function processBuild(environment) {
     });
 }
 
+function buildCustomConfiguration(defaultConfig, customConfig) {
+  return function(env, args) {
+    return merge(defaultConfig(env, args), customConfig(env, args));
+  }
+}
+
 function build(environment, previousFileSizes) {
   const webpack = require('webpack');
 
-  const makeConfiguration = require(`../webpack.${environment}`);
+  const defaultConfiguration = require(`../webpack.${environment}`);
+  const combinedConfiguration = hasOwnConfig ? buildCustomConfiguration(defaultConfiguration, customConfiguration) : defaultConfiguration;
 
-  const compiler = webpack(makeConfiguration(environment, argv));
+  const compiler = webpack(combinedConfiguration(environment, argv));
 
   return new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
@@ -146,9 +163,10 @@ function build(environment, previousFileSizes) {
 function processWatch(environment) {
   const webpack = require('webpack');
 
-  const makeConfiguration = require(`../webpack.${environment}`);
+  const defaultConfiguration = require(`../webpack.${environment}`);
+  const combinedConfiguration = hasOwnConfig ? buildCustomConfiguration(defaultConfiguration, customConfiguration) : defaultConfiguration;
 
-  const compiler = webpack(makeConfiguration(environment, argv));
+  const compiler = webpack(combinedConfiguration(environment, argv));
 
   compiler.plugin('invalid', () => {
     if (isInteractive) {
