@@ -14,14 +14,15 @@ module.exports = function(env, args) {
     },
     externals: {
     },
-    entry: [
-      './Resources/Private/Javascript/header.js',
-      './Resources/Private/Javascript/footer.js',
-      './Resources/Private/Sass/main.scss'
-    ],
+    entry: {
+      header: './Resources/Private/Javascript/header.js',
+      footer: './Resources/Private/Javascript/footer.js',
+      main: './Resources/Private/Scss/main.scss',
+      print: './Resources/Private/Scss/print.scss'
+    },
     output: {
-      filename: '[name].js',
-      path: path.resolve('./Resources/Public/Dist')
+      path: path.resolve('./Resources/Public/Dist'),
+      filename: '[name].js'
     },
     resolve: {
       alias: {
