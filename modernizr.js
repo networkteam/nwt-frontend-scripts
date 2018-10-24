@@ -1,0 +1,1 @@
+// Is needed for modernizr loader, do not delete

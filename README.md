@@ -14,3 +14,25 @@ module.exports = function(env, args) {
   };
 };
 ```
+
+## Using modernizr
+
+By default modernizr is generated with `setclasses` option and can be imported via
+
+```Javascript
+import Modernizr from 'modernizr'
+```
+
+To extend the configuration and add tests and feature detections, create a `.modernizrrc` in your Project Root:
+
+```Javascript
+module.exports = {
+  "feature-detects": [
+    "test/css/flexbox",
+    "test/es6/promises",
+    "test/serviceworker"
+  ]
+};
+```
+
+[See full configuration possibilities](https://github.com/Modernizr/Modernizr/blob/master/lib/config-all.json)

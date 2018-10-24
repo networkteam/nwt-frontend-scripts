@@ -1,6 +1,8 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const IconfontPlugin = require('iconfont-plugin-webpack');
+const deepmerge = require('deepmerge');
+
 
 module.exports = function(env, args) {
   const mode = args.mode;
@@ -8,6 +10,14 @@ module.exports = function(env, args) {
   const customerName = basePackageName.split('.')[0]
 
   const basePackagePathAbsolute = () => path.resolve(process.cwd(), `../${basePackageName}`);
+  const modernizrBaseConfig = require(path.resolve(__dirname,'.modernizrrc'));
+  let modernizrCustomConfig = {};
+
+  try {
+    modernizrCustomConfig = require(path.resolve(process.cwd(), '.modernizrrc'));
+  } catch(e) {}
+
+  const modernizrConfig = deepmerge(modernizrBaseConfig, modernizrCustomConfig)
 
   return {
     mode: mode,
@@ -32,7 +42,8 @@ module.exports = function(env, args) {
       alias: {
         baseJavascript: `${basePackagePathAbsolute()}/Resources/Private/Javascript`,
         baseStyles: `${basePackagePathAbsolute()}/Resources/Private/Scss`,
-        neosRoot: path.resolve(process.cwd(), '../../')
+        neosRoot: path.resolve(process.cwd(), '../../'),
+        modernizr$: path.resolve(__dirname, 'modernizr.js')
       },
       modules: [
         path.resolve('./node_modules'),
@@ -64,6 +75,11 @@ module.exports = function(env, args) {
             }
           ],
           include: path.resolve('./Resources/Private/Javascript')
+        },
+        {
+          test: /modernizr\.js$/,
+          loader: require.resolve('webpack-modernizr-loader'),
+          options: modernizrConfig
         },
         {
           test: /\.js?$/,
