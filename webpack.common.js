@@ -1,10 +1,13 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const IconfontPlugin = require('iconfont-plugin-webpack');
 
 module.exports = function(env, args) {
   const mode = args.mode;
+  const basePackageName = args['basePackage'];
+  const customerName = basePackageName.split('.')[0]
 
-  const basePackagePathAbsolute = () => path.resolve(process.cwd(), '../Customer.Base');
+  const basePackagePathAbsolute = () => path.resolve(process.cwd(), `../${basePackageName}`);
 
   return {
     mode: mode,
@@ -138,6 +141,19 @@ module.exports = function(env, args) {
       ]
     },
     plugins: [
+      new IconfontPlugin({
+        src: path.resolve(`${basePackagePathAbsolute()}/Resources/Private/Iconfont/`),
+        family: `${customerName}-icons`,
+        dest: {
+          font: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Fonts/[family].[type]`,
+          css: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Scss/0_Base/_Icons.scss`
+        },
+        watch: {
+          pattern: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Iconfont/*.svg`,
+          cwd: undefined
+        },
+         cssTemplate: require('./templates/_Icons.scss-template.js')
+      }),
       new MiniCssExtractPlugin({
         filename: '[name].css',
         chunkFilename: '[id].css'
