@@ -31,10 +31,10 @@ Add BasePackageName and copy the scripts to your package.json:
 
 Webpack relies on four entry points to generate JS and CSS Assets:
 
-%PROJECTROOT%/Resources/Private/Javascript/header.js // Generates header.js file
-%PROJECTROOT%/Resources/Private/Javascript/footer.js // Generates footer.js file
-%PROJECTROOT/Resources/Scss/main.scss // Generates main.css and empty main.js wich can be ignored
-%PROJECTROOT/Resources/Scss/print.scss // Generates print.css and empty print.js wich can be ignored
+* header.js: %PROJECTROOT%/Resources/Private/Javascript/header.js
+* footer.js: %PROJECTROOT%/Resources/Private/Javascript/footer.js
+* main.css: %PROJECTROOT/Resources/Scss/main.scss
+* print.css: %PROJECTROOT/Resources/Scss/print.scss
 
 Start the npm task:
 

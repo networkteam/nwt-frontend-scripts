@@ -5,6 +5,15 @@
   "bin": {
     "networkteam-asset-build": "./bin/cli.js"
   },
+  "author": "networkteam GmbH",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/networkteam/nwt-frontend-scripts"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
