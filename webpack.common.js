@@ -162,13 +162,13 @@ module.exports = function(env, args) {
         family: `${customerName}-icons`,
         dest: {
           font: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Fonts/[family].[type]`,
-          css: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Scss/0_Base/_Icons.scss`
+          css: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Scss/0_Base/_icons.scss`
         },
         watch: {
           pattern: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Iconfont/*.svg`,
           cwd: undefined
         },
-         cssTemplate: require('./templates/_Icons.scss-template.js')
+         cssTemplate: require(path.resolve(__dirname,'./templates/_icons.scss-template'))
       }),
       new MiniCssExtractPlugin({
         filename: '[name].css',
