@@ -52,14 +52,14 @@ The generated files will be copied to `%PROJECTROOT%/Resources/Public/Dist` incl
 
 This workflow automatically provides aliases for an easier import from different folders:
 
-* neosRoot: The root folder of your Neos installation
-* baseJavascript Javascript components from base package (%BASEROOT%/Resources/Private/Javascript)
-* baseStyles: Styles from basePackage (%BASEROOT%/Resources/Private/Scss use e.g '~baseStyles/main' to import main.scss)
-* modernizr: Auto-Generated modernizr file (see below)
+* **neosRoot**: The root folder of your Neos installation
+* **baseJavascript**: Javascript components from base package (%BASEROOT%/Resources/Private/Javascript)
+* **baseStyles**: Styles from basePackage (%BASEROOT%/Resources/Private/Scss use e.g `~baseStyles/main` to import main.scss)
+* **modernizr**: Auto-Generated modernizr file (see below)
 
 ## Icon Font
 
-Every SVG-File located in `%BASEROOT%/Resources/Private/Iconfont` will be included in an automatically generated Icon-Font. The Font-Files will be stored in `%BASEROOT%/Resources/Private/Fonts` and a SCSS-File can be found in `%BASEROOT%/Resources/Private/Scss/0_Base/Icons.scss`. This SCSS-File already kincludes the @font-face rules, classes for the icons to add a before-Element with the icojn (`.icon-%FILENAME%`) and also a mixin to use the icon on every element (`@include icon(%FILENAME%)`).
+Every SVG-File located in `%BASEROOT%/Resources/Private/Iconfont` will be included in an automatically generated Icon-Font. The Font-Files will be stored in `%BASEROOT%/Resources/Private/Fonts` and a SCSS-File can be found in `%BASEROOT%/Resources/Private/Scss/0_Base/Icons.scss`. This SCSS-File already includes the `@font-face` rules, classes for the icons to add a before-Element with the icon (`.icon-%FILENAME%`) and also a mixin to use the icon on every element (`@include icon(%FILENAME%)`).
 
 ## Add own configuration
 
