@@ -33,8 +33,8 @@ Webpack relies on four entry points to generate JS and CSS Assets:
 
 * header.js: %PROJECTROOT%/Resources/Private/Javascript/header.js
 * footer.js: %PROJECTROOT%/Resources/Private/Javascript/footer.js
-* main.css: %PROJECTROOT/Resources/Scss/main.scss
-* print.css: %PROJECTROOT/Resources/Scss/print.scss
+* main.css: %PROJECTROOT/Resources/Private/Scss/main.scss
+* print.css: %PROJECTROOT/Resources/Private/Scss/print.scss
 
 Start the npm task:
 
