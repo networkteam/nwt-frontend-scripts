@@ -1,6 +1,6 @@
 {
   "name": "@networkteam/frontend-scripts",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "networkteam asset build scripts",
   "bin": {
     "networkteam-asset-build": "./bin/cli.js"
