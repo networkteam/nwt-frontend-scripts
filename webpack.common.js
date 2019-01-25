@@ -7,6 +7,9 @@ const deepmerge = require('deepmerge');
 module.exports = function(env, args) {
   const mode = args.mode;
   const basePackageName = args['basePackage'];
+  const projectType = args['projectType'];
+  const isNeos = projectType === 'neos';
+  const isTypo3 = projectType === 'typo3';
   const customerName = basePackageName.split('.')[0]
 
   const basePackagePathAbsolute = () => path.resolve(process.cwd(), `../${basePackageName}`);
@@ -17,7 +20,14 @@ module.exports = function(env, args) {
     modernizrCustomConfig = require(path.resolve(process.cwd(), '.modernizrrc'));
   } catch(e) {}
 
-  const modernizrConfig = deepmerge(modernizrBaseConfig, modernizrCustomConfig)
+  const modernizrConfig = deepmerge(modernizrBaseConfig, modernizrCustomConfig);
+  const baseAlias = {
+    baseJavascript: `${basePackagePathAbsolute()}/Resources/Private/Javascript`,
+    baseStyles: `${basePackagePathAbsolute()}/Resources/Private/Scss`,
+    baseComponents: `${basePackagePathAbsolute()}/Resources/Private/Components`,
+    rootPath: path.resolve(process.cwd(), '../../'),
+    modernizr$: path.resolve(__dirname, 'modernizr.js')
+  };
 
   return {
     mode: mode,
@@ -39,12 +49,7 @@ module.exports = function(env, args) {
       filename: '[name].js'
     },
     resolve: {
-      alias: {
-        baseJavascript: `${basePackagePathAbsolute()}/Resources/Private/Javascript`,
-        baseStyles: `${basePackagePathAbsolute()}/Resources/Private/Scss`,
-        neosRoot: path.resolve(process.cwd(), '../../'),
-        modernizr$: path.resolve(__dirname, 'modernizr.js')
-      },
+      alias: baseAlias,
       modules: [
         path.resolve('./node_modules'),
         'node_modules'
@@ -162,7 +167,7 @@ module.exports = function(env, args) {
         family: `${customerName}-icons`,
         dest: {
           font: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Fonts/[family].[type]`,
-          css: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Scss/0_Base/_icons.scss`
+          css: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Scss/_icons.scss`
         },
         watch: {
           pattern: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Iconfont/*.svg`,

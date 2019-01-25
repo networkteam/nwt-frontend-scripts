@@ -52,7 +52,7 @@ The generated files will be copied to `%PROJECTROOT%/Resources/Public/Dist` incl
 
 This workflow automatically provides aliases for an easier import from different folders:
 
-* neosRoot: The root folder of your Neos installation
+* rootPath: The root folder of your project
 * baseJavascript Javascript components from base package (%BASEROOT%/Resources/Private/Javascript)
 * baseStyles: Styles from basePackage (%BASEROOT%/Resources/Private/Scss use e.g '~baseStyles/main' to import main.scss)
 * modernizr: Auto-Generated modernizr file (see below)
