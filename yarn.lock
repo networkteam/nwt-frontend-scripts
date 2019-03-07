@@ -2846,6 +2846,13 @@ hash.js@^1.0.0, hash.js@^1.0.3:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.1"
 
+hashdirectory@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/hashdirectory/-/hashdirectory-0.1.0.tgz#7c4afeb95bd2ad5b56534c4215dbce70f2f1e61d"
+  integrity sha1-fEr+uVvSrVtWU0xCFdvOcPLx5h0=
+  dependencies:
+    q "^1.0.1"
+
 hmac-drbg@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/hmac-drbg/-/hmac-drbg-1.0.1.tgz#d2745701025a6c775a6c545793ed502fc0c649a1"
@@ -4701,7 +4708,7 @@ punycode@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
 
-q@^1.1.2:
+q@^1.0.1, q@^1.1.2:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
 

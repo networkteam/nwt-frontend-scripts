@@ -2,6 +2,7 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const IconfontPlugin = require('iconfont-plugin-webpack');
 const deepmerge = require('deepmerge');
+const hashdirectory = require('hashdirectory');
 
 
 module.exports = function(env, args) {
@@ -13,6 +14,7 @@ module.exports = function(env, args) {
   const customerName = basePackageName.split('.')[0]
 
   const basePackagePathAbsolute = () => path.resolve(process.cwd(), `../${basePackageName}`);
+  const iconPath = path.resolve(`${basePackagePathAbsolute()}/Resources/Private/Iconfont/`);
   const modernizrBaseConfig = require(path.resolve(__dirname,'.modernizrrc'));
   let modernizrCustomConfig = {};
 
@@ -163,14 +165,14 @@ module.exports = function(env, args) {
     },
     plugins: [
       new IconfontPlugin({
-        src: path.resolve(`${basePackagePathAbsolute()}/Resources/Private/Iconfont/`),
-        family: `${customerName}-icons`,
+        src: iconPath,
+        family: `${customerName}-icons.${hashdirectory.sync(iconPath).substr(0, 7)}`,
         dest: {
           font: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Fonts/[family].[type]`,
           css: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Scss/_icons.scss`
         },
         watch: {
-          pattern: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Iconfont/*.svg`,
+          pattern: `${iconPath}/*.svg`,
           cwd: undefined
         },
          cssTemplate: require(path.resolve(__dirname,'./templates/_icons.scss-template'))
