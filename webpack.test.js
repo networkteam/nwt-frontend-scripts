@@ -84,7 +84,7 @@ module.exports = function(env, args) {
     },
     plugins: [
       new ExtraWatchWebpackPlugin({
-        dirs: ['./Resources/Private/JavaScript']
+        dirs: ['./Resources/Private/JavaScript', `${basePackagePathAbsolute()}/Resources/Private/JavaScript`]
       })
     ]
   });
