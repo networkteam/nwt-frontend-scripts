@@ -33,6 +33,7 @@ module.exports = {
     global.chai = chai;
     global.sinon = sinon;
     global.sandbox = sinon.createSandbox();
+    global.XMLHttpRequest = sinon.useFakeXMLHttpRequest();
     global.window = window;
     global.document = window.document;
     global.navigator = {
