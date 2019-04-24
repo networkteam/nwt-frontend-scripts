@@ -6,7 +6,6 @@ const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin');
 module.exports = function(env, args) {
 
   const basePackageName = args['basePackage'];
-  const testPathAbsolute = path.resolve('./Resources/Private/Javascript/test');
   const basePackagePathAbsolute = () => path.resolve(process.cwd(), `../${basePackageName}`);
 
   return merge(common(env, args), {
@@ -21,7 +20,6 @@ module.exports = function(env, args) {
           include: [
             path.resolve('./Resources/Private/Javascript'),
             path.resolve(`${basePackagePathAbsolute()}/Resources/Private/Javascript`),
-            testPathAbsolute
           ],
           exclude: /node_modules/,
           loader: require.resolve('babel-loader'),

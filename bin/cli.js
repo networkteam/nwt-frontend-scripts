@@ -34,7 +34,6 @@ switch (script) {
     processBuild(script);
     break;
   case 'prod':
-  case 'analyze':
     process.env.BABEL_ENV = 'production';
     process.env.NODE_ENV = 'production';
 
@@ -50,7 +49,7 @@ switch (script) {
     processTestWatch();
     break;
   default:
-    console.error(`Unknown environment "${script}", expected "dev", "prod", "analyze" or "test / test-watch`);
+    console.error(`Unknown environment "${script}", expected "dev", "prod" or "test / test-watch`);
     process.exit(1);
 }
 
@@ -249,6 +248,8 @@ function runTest({ watch } = {}) {
 
   const reportDirectory = path.resolve(process.cwd(), './Resources/Private/Javascript/coverage');
 
+  const basePackagePathAbsolute = () =>  path.resolve(process.cwd(), `../${argv.basePackage}`);
+
   testHelper.prepareTestEnvironment();
   if (!watch) {
     coverageHelper.prepareCoverageReporter();
@@ -256,7 +257,7 @@ function runTest({ watch } = {}) {
 
   mochaWebpack.cwd(process.cwd());
   mochaWebpack.webpackConfig(require('../webpack.test')('development', argv));
-  mochaWebpack.addEntry(path.resolve(process.cwd(), '../Customer.Base/Resources/Private/Javascript/') + '/**/*.test.js');
+  mochaWebpack.addEntry(path.resolve(basePackagePathAbsolute(), './Resources/Private/Javascript/') + '/**/*.test.js');
 
   mochaWebpack.reporter(combinedReporter(reportDirectory));
 
