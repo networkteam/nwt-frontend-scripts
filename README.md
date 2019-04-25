@@ -23,9 +23,13 @@ Add BasePackageName and copy the scripts to your package.json:
     "build": "npm run webpack",
     "build:dev": "npm run webpack:dev",
     "start": "npm run webpack:watch",
+    "test": "npm run webpack:test",
+    "test-watch": "npm run webpack:test-watch",
     "webpack": "networkteam-asset-build prod --basePackage $npm_package_basePackageName",
     "webpack:dev": "networkteam-asset-build dev --basePackage $npm_package_basePackageName",
-    "webpack:watch": "networkteam-asset-build watch --basePackage $npm_package_basePackageName"
+    "webpack:watch": "networkteam-asset-build watch --basePackage $npm_package_basePackageName",
+    "webpack:test": "networkteam-asset-build test --basePackage $npm_package_basePackageName",
+    "webpack:test-watch": "networkteam-asset-build test-watch --basePackage $npm_package_basePackageName"
   },
 ```
 
@@ -42,6 +46,8 @@ Start the npm task:
 npm start // file watcher with hot reload
 npm run build:dev // Development build
 npm run build // Production build
+npm run test // Testing with code coverage recap
+npm run test-watch // Run watcher for TDD
 ```
 
 **Note:** Webpack generates a JS-File for every entry point including JS-Files. This will be improved in future Versions of webpack
@@ -97,3 +103,59 @@ module.exports = {
 ```
 
 [See full configuration possibilities](https://github.com/Modernizr/Modernizr/blob/master/lib/config-all.json)
+
+## Testing
+For unit testing create a file `${your-filename}.test.js` within your javascript folder.
+Webpack will watch for files within the javascript directory ending on `*.test.js`.
+Run your tests by simply start `npm run test`.
+
+If you want to test with the BDD approach, you can start the script with `npm run test-watch`.
+This will reload the tests with every save.
+
+We use `chai` as assertion and `sinon` as mocking library.
+Within the testing environment you have access to the following global variables:
+  * `chai`
+  * `sinon`
+  * `expect` - the `chai.expect`
+  * `assert` - the `chai.assert`
+  * `sandbox` - the `sinon.sandbox`
+
+You can also use `window` and `document`, as usual.
+
+Here you get more information about [Sinon](https://sinonjs.org/) and [Chai - BDD](https://www.chaijs.com/api/bdd/)
+
+**Example:**
+```js
+// Resources/Private/Javscript/Custom/Component/ComponentToTest.test.js
+
+/*global describe, it, beforeEach, afterEach, sandbox*/
+import ComponentToTest from './ComponentToTest';
+
+describe('ComponentToTest', () => {
+  let component = null;
+  beforeEach(done => {
+    component = new ComponentToTest();
+    // do some stuff before each testing step
+    document.body.innerHTML = '<div id="myContainer"></<div>';
+    done();
+  });
+
+  afterEach(done => {
+    // do some stuff after each testing step
+    document.body.innerHTMl = '';
+    done();
+  });
+
+    describe('some tests with special attributes', () => {
+      it('it should do something', done => {
+        // do something with <component>
+        component.initialize();
+
+        // do some expectations concerning <component>.
+        expect(component).to.have.property('initialized').equals(true);
+        done();
+      });
+    });
+  }
+}
+```
