@@ -26,7 +26,7 @@ const buildPath = './Resources/Public/Dist';
 const script = process.argv[2];
 const argv = require('minimist')(process.argv.slice(3));
 
-const hasOwnConfig = fs.existsSync(path.resolve(process.cwd(), 'webpack.js'))
+const hasOwnConfig = fs.existsSync(path.resolve(process.cwd(), 'webpack.js'));
 const customConfiguration = hasOwnConfig ? require(path.resolve(process.cwd(), 'webpack.js')) : null;
 
 switch (script) {
@@ -42,8 +42,14 @@ switch (script) {
   case 'watch':
     processWatch('dev');
     break;
+  case 'test':
+    processTest();
+    break;
+  case 'test-watch':
+    processTestWatch();
+    break;
   default:
-    console.error(`Unknown environment "${script}", expected "dev" or "prod"`);
+    console.error(`Unknown environment "${script}", expected "dev", "prod" or "test / test-watch`);
     process.exit(1);
 }
 
@@ -113,7 +119,6 @@ function buildCustomConfiguration(defaultConfig, customConfig) {
 
 function build(environment, previousFileSizes) {
   const webpack = require('webpack');
-
   const defaultConfiguration = require(`../webpack.${environment}`);
   const combinedConfiguration = hasOwnConfig ? buildCustomConfiguration(defaultConfiguration, customConfiguration) : defaultConfiguration;
 
@@ -222,4 +227,53 @@ function processWatch(environment) {
 
   compiler.watch({}, (err, stats) => {
   });
+}
+
+
+function processTest() {
+  runTest();
+}
+
+function processTestWatch() {
+  runTest({ watch: true });
+}
+
+function runTest({ watch } = {}) {
+  const createMochaWebpack = require('mocha-webpack');
+  const testHelper = require('../helpers/testHelper');
+  const coverageHelper = require('../helpers/coverageHelper');
+  const combinedReporter = require('../helpers/combinedTestReporter');
+
+  const mochaWebpack = createMochaWebpack();
+
+  const reportDirectory = path.resolve(process.cwd(), './Resources/Private/Javascript/coverage');
+
+  const basePackagePathAbsolute = () =>  path.resolve(process.cwd(), `../${argv.basePackage}`);
+
+  testHelper.prepareTestEnvironment();
+  if (!watch) {
+    coverageHelper.prepareCoverageReporter();
+  }
+
+  mochaWebpack.cwd(process.cwd());
+  mochaWebpack.webpackConfig(require('../webpack.test')('development', argv));
+  mochaWebpack.addEntry(path.resolve(basePackagePathAbsolute(), './Resources/Private/Javascript/') + '/**/*.test.js');
+
+  mochaWebpack.reporter(combinedReporter(reportDirectory));
+
+  if (watch) {
+    mochaWebpack.watch();
+  } else {
+    const runner = mochaWebpack.run();
+
+    runner.then((errors) => {
+      coverageHelper.generateCoverageReport(reportDirectory);
+
+      if(!errors) {
+        console.log(chalk.green('Tests completed'));
+      } else {
+        console.error(chalk.red(`${errors} ${errors === 1 ? 'Test' : 'Tests'} failed`));
+      }
+    });
+  }
 }
