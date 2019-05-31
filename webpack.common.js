@@ -92,9 +92,10 @@ module.exports = function(env, args) {
           test: /\.js?$/,
           include: [
             path.resolve('./Resources/Private/Javascript'),
-            path.resolve(`${basePackagePathAbsolute()}/Resources/Private/Javascript/`)
+            path.resolve(`${basePackagePathAbsolute()}/Resources/Private/Javascript/`),
+            /node_modules/
           ],
-          exclude: /node_modules/,
+          exclude: /@babel(?:\/|\\{1,2})runtime/,
           loader: require.resolve('babel-loader'),
           options: {
             "presets": [
