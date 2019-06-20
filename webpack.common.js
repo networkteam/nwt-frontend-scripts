@@ -95,7 +95,7 @@ module.exports = function(env, args) {
             path.resolve(`${basePackagePathAbsolute()}/Resources/Private/Javascript/`),
             /node_modules/
           ],
-          exclude: /@babel(?:\/|\\{1,2})runtime/,
+          exclude: /@babel(?:\/|\\{1,2})runtime|pdfjs-dist/,
           loader: require.resolve('babel-loader'),
           options: {
             "presets": [
