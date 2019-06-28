@@ -9,7 +9,7 @@ commit_package_files() {
   git remote remove origin
   git remote add origin https://${GITHUB_TOKEN}@github.com/networkteam/nwt-frontend-scripts
   git add package.json
-  git commit --message "NPM RELEASE: $NPM_VERSION"
+  git commit --message "NPM RELEASE: ${NPM_VERSION}"
 }
 
 upload_files() {
