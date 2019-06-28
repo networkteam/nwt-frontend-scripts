@@ -3,6 +3,7 @@ const { JSDOM } = require('jsdom');
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
+const chaiDom = require('chai-dom');
 
 // Sets defaults for testing
 module.exports = {
@@ -27,6 +28,7 @@ module.exports = {
     }
 
     chai.use(sinonChai);
+    chai.use(chaiDom);
 
     global.expect = chai.expect;
     global.assert = chai.assert;
