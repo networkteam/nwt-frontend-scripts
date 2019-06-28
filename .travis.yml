@@ -1,14 +1,21 @@
 language: node_js
-
-
 install: true
 script: true
-branches:
-  only:
-  - master
+before_deploy: |
+  if [[ -z $TRAVIS_TAG ]]; then
+    TRAVIS_TAG="next"
+  fi
+
+  npm --no-git-tag-version version ${TRAVIS_TAG}
 deploy:
   provider: npm
-  email: $NPM_EMAIL
-  api_key: $NPM_TOKEN
+  skip_cleanup: true
+  email: "$NPM_EMAIL"
+  api_key: "$NPM_TOKEN"
   on:
     tags: true
+after_deploy:
+- ".travis/push_version.sh"
+env:
+  global:
+    secure: m23FkKqXRFGdLJ0BjW3TE8Pt9z5unWOcbvHBvRF45cQh/ynZahhuTjl534jBIl3BjkzNT+estkD8asoEMj0/5+ZvNpHzxW/KYbkWxo3aCKfPvd5OPWfGL4IjuvNmIwP7My2WVDdoXYHGeSpMq3T/J8Zo7d5aqR+264eI8V491BnBDpUmlx5QmTEaQ4IpWBIXEIyCOe1Kh0vyoVCXKz1aOp2MlR5qY/HQyAM36nSKjdLlb9TkcOWCm+B9N+bNjTp+I7aRMVdDJLRCUJgf4sdoX2uD7trpihKo0VYvrWO33ZXJ2Gx2rlzvDJE3XKOtagx+x8JV3SAAV/JTv2S57/2/0o/dD1AHeVgGZBiSrkE+/gr4Jzcb8NvXupSgtQru42hT/XhrXZL4Za9zZGRxfg3b68PLjK7MdoQxmUtLgqJYwHayUEpjGAR4AYL+DeUSyFOfZa92KlOpCNU8NpMojyG/iSjbZA/8MPIt4q+aUWB1oxYEPOSG+onF7+nK/VwNGFamVegs0L+Vo8U7zNCeKXa/aVbMsD8C/AHu798kXKOCZplftvbBlbFUouh4IOynLYE6TzEJJ16AOk0xbWDfzmr+UCNbep1qohhRsZ+Dr+GThQQ65tHlsM6cOL0Vra33LW7bzdZlHSx0ba5jC5sGz+M8TwPUJDsICepvP0+F4dqckPM=
