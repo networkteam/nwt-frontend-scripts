@@ -93,6 +93,7 @@ module.exports = function(env, args) {
           include: [
             path.resolve('./Resources/Private/Javascript'),
             path.resolve(`${basePackagePathAbsolute()}/Resources/Private/Javascript/`),
+            path.resolve(`${basePackagePathAbsolute()}/Resources/Private/Components`),
             /node_modules/
           ],
           exclude: /@babel(?:\/|\\{1,2})runtime|pdfjs-dist/,
