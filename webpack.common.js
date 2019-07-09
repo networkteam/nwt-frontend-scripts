@@ -90,12 +90,6 @@ module.exports = function(env, args) {
         },
         {
           test: /\.js?$/,
-          include: [
-            path.resolve('./Resources/Private/Javascript'),
-            path.resolve(`${basePackagePathAbsolute()}/Resources/Private/Javascript/`),
-            path.resolve(`${basePackagePathAbsolute()}/Resources/Private/Components`),
-            /node_modules/
-          ],
           exclude: /@babel(?:\/|\\{1,2})runtime|pdfjs-dist/,
           loader: require.resolve('babel-loader'),
           options: {
