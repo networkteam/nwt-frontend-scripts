@@ -113,7 +113,20 @@ function processBuild(environment) {
 
 function buildCustomConfiguration(defaultConfig, customConfig) {
   return function(env, args) {
-    return merge(defaultConfig(env, args), customConfig(env, args));
+    return merge({
+      customizeObject(a,b,key) {
+        if (key === 'entry') {
+          Object.keys(a).forEach(key => {
+            if (b[key] !== undefined && !b[key]) {
+              delete a[key];
+              delete b[key];
+            }
+          });
+        }
+
+        return undefined;
+      }
+    })(defaultConfig(env, args), customConfig(env, args));
   }
 }
 

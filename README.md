@@ -67,6 +67,8 @@ This workflow automatically provides aliases for an easier import from different
 
 Every SVG-File located in `%BASEROOT%/Resources/Private/Iconfont` will be included in an automatically generated Icon-Font. The Font-Files will be stored in `%BASEROOT%/Resources/Private/Fonts` and a SCSS-File can be found in `%BASEROOT%/Resources/Private/Scss/0_Base/Icons.scss`. This SCSS-File already includes the `@font-face` rules, classes for the icons to add a before-Element with the icon (`.icon-%FILENAME%`) and also a mixin to use the icon on every element (`@include icon(%FILENAME%)`).
 
+To prevent IconFont from being built, use the `--noIconFont` Flag in your npm tasks
+
 ## Add own configuration
 
 If you need a special configuration for your Project, you can add a custom webpack.js to your project root. It will be included automatically:
@@ -80,6 +82,8 @@ module.exports = function(env, args) {
   };
 };
 ```
+
+To remove entry points from webpack, you can set them to null in your own configuration
 
 ## Using modernizr
 

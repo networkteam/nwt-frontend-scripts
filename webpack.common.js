@@ -9,6 +9,7 @@ module.exports = function(env, args) {
   const mode = args.mode;
   const basePackageName = args['basePackage'];
   const projectType = args['projectType'];
+  const generateIconFont = args['noIconFont'] ? false : true;
   const isNeos = projectType === 'neos';
   const isTypo3 = projectType === 'typo3';
   const customerName = basePackageName.split('.')[0]
@@ -21,6 +22,20 @@ module.exports = function(env, args) {
   try {
     modernizrCustomConfig = require(path.resolve(process.cwd(), '.modernizrrc'));
   } catch(e) {}
+
+  const iconFontPlugin = generateIconFont ? [new IconfontPlugin({
+    src: iconPath,
+    family: `${customerName}-icons.${hashdirectory.sync(iconPath).substr(0, 7)}`,
+    dest: {
+      font: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Fonts/[family].[type]`,
+      css: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Scss/_icons.scss`
+    },
+    watch: {
+      pattern: `${iconPath}/*.svg`,
+      cwd: undefined
+    },
+    cssTemplate: require(path.resolve(__dirname,'./templates/_icons.scss-template'))
+  })]: [];
 
   const modernizrConfig = deepmerge(modernizrBaseConfig, modernizrCustomConfig);
   const baseAlias = {
@@ -160,19 +175,7 @@ module.exports = function(env, args) {
       ]
     },
     plugins: [
-      new IconfontPlugin({
-        src: iconPath,
-        family: `${customerName}-icons.${hashdirectory.sync(iconPath).substr(0, 7)}`,
-        dest: {
-          font: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Fonts/[family].[type]`,
-          css: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Scss/_icons.scss`
-        },
-        watch: {
-          pattern: `${iconPath}/*.svg`,
-          cwd: undefined
-        },
-         cssTemplate: require(path.resolve(__dirname,'./templates/_icons.scss-template'))
-      }),
+      ...iconFontPlugin,
       new MiniCssExtractPlugin({
         filename: '[name].css',
         chunkFilename: '[id].css'
