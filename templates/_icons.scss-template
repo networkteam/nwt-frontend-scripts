@@ -14,13 +14,13 @@ function template(customer) {
   // What is the common class name that icons share? in this case icons need to have .icon.filename in their classes
   // This requires you to have 2 classes on each icon html element, but reduced redeclaration of the font family
   // for each icon
-  $icon-common-class: 'icon';
+  $icon-common-class: 'icon' !default;
 
   // If you whish to prefix your filenames, here you can do so.
   // If this string stays empty, your classes will use the filename, for example
   // an icon called star.svg will result in a class called .star
   // Af you use the prefix to be 'icon-' it would result in .icon-star
-  $icon-prefix: 'icon-';
+  $icon-prefix: 'icon-' !default;
 
   $icon-font-path: '../../Fonts/' !default;
 
