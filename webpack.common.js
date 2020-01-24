@@ -28,8 +28,12 @@ module.exports = function(env, args) {
       filename: `${customerName}-iconsprite.svg`
     },
     styles: {
-      format: 'fragment',
-      filename: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Scss/_sprites.scss`
+      // Cannot use SCSS here because node-sass
+      filename: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Scss/_Sprites.scss`,
+      variables: {
+        sizes: 'spriteSize',
+        variables: 'spriteVariables'
+      }
     }
   })] : []
 
@@ -163,7 +167,9 @@ module.exports = function(env, args) {
               loader: require.resolve('sass-loader'),
               options: {
                 sourceMap: true,
-                outputStyle: mode === 'production' ? 'compressed' : 'nested'
+                sassOptions: {
+                  outputStyle: mode === 'production' ? 'compressed' : 'nested'
+                }
               }
             }
           ]
