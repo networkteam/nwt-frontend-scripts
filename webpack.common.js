@@ -9,7 +9,7 @@ module.exports = function(env, args) {
   const mode = args.mode;
   const basePackageName = args['basePackage'];
   const projectType = args['projectType'];
-  const generateIconFont = args['noIconFont'] ? false : true;
+  const generateIconFont = args['noIconSprite'] ? false : true;
   const isNeos = projectType === 'neos';
   const isTypo3 = projectType === 'typo3';
   const customerName = basePackageName.split('.')[0]

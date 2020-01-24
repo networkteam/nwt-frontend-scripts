@@ -63,11 +63,11 @@ This workflow automatically provides aliases for an easier import from different
 * **baseStyles**: Styles from basePackage (%BASEROOT%/Resources/Private/Scss use e.g `~baseStyles/main` to import main.scss)
 * **modernizr**: Auto-Generated modernizr file (see below)
 
-## Icon Font
+## Icon Sprite
 
-Every SVG-File located in `%BASEROOT%/Resources/Private/Iconfont` will be included in an automatically generated Icon-Font. The Font-Files will be stored in `%BASEROOT%/Resources/Private/Fonts` and a SCSS-File can be found in `%BASEROOT%/Resources/Private/Scss/0_Base/Icons.scss`. This SCSS-File already includes the `@font-face` rules, classes for the icons to add a before-Element with the icon (`.icon-%FILENAME%`) and also a mixin to use the icon on every element (`@include icon(%FILENAME%)`).
+Every SVG-File located in `%BASEROOT%/Resources/Private/Icons` will be included in an automatically generated Svgsprite. The Font-Files will be stored in `%BASEROOT%/Resources/Public/Dist` and a SCSS-File can be found in `%BASEROOT%/Resources/Private/Scss/_sprite.scss`. This SCSS-File includes the mixins to use the icon on every element (`@include sprite(%FILENAME%)`) although this is way is not encouraged due to repeated server requests.
 
-To prevent IconFont from being built, use the `--noIconFont` Flag in your npm tasks
+To prevent Iconsprite from being built, use the `--noIconSprite` Flag in your npm tasks
 
 ## Add own configuration
 
