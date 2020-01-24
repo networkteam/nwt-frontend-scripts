@@ -1,6 +1,6 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const IconfontPlugin = require('iconfont-plugin-webpack');
+const SVGSpritemapPlugin = require('svg-spritemap-webpack-plugin');
 const deepmerge = require('deepmerge');
 const hashdirectory = require('hashdirectory');
 
@@ -15,7 +15,7 @@ module.exports = function(env, args) {
   const customerName = basePackageName.split('.')[0]
 
   const basePackagePathAbsolute = () => path.resolve(process.cwd(), `../${basePackageName}`);
-  const iconPath = path.resolve(`${basePackagePathAbsolute()}/Resources/Private/Iconfont/`);
+  const iconPath = path.resolve(`${basePackagePathAbsolute()}/Resources/Private/Icons/`);
   const modernizrBaseConfig = require(path.resolve(__dirname,'.modernizrrc'));
   let modernizrCustomConfig = {};
 
@@ -23,19 +23,15 @@ module.exports = function(env, args) {
     modernizrCustomConfig = require(path.resolve(process.cwd(), '.modernizrrc'));
   } catch(e) {}
 
-  const iconFontPlugin = generateIconFont ? [new IconfontPlugin({
-    src: iconPath,
-    family: `${customerName}-icons.${hashdirectory.sync(iconPath).substr(0, 7)}`,
-    dest: {
-      font: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Fonts/[family].[type]`,
-      css: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Scss/_icons.scss`
+  const iconSpritePlugin = generateIconFont ? [new SVGSpritemapPlugin([`${iconPath}/**/*.svg`], {
+    output: {
+      filename: `${customerName}-iconsprite.svg`
     },
-    watch: {
-      pattern: `${iconPath}/*.svg`,
-      cwd: undefined
-    },
-    cssTemplate: require(path.resolve(__dirname,'./templates/_icons.scss-template'))
-  })]: [];
+    styles: {
+      format: 'fragment',
+      filename: `${path.resolve(basePackagePathAbsolute())}/Resources/Private/Scss/_sprites.scss`
+    }
+  })] : []
 
   const modernizrConfig = deepmerge(modernizrBaseConfig, modernizrCustomConfig);
   const baseAlias = {
@@ -59,7 +55,7 @@ module.exports = function(env, args) {
       header: './Resources/Private/Javascript/header.js',
       footer: './Resources/Private/Javascript/footer.js',
       main: './Resources/Private/Scss/main.scss',
-      print: './Resources/Private/Scss/print.scss'
+      print: './Resources/Private/Scss/print.scss',
     },
     output: {
       path: path.resolve('./Resources/Public/Dist'),
@@ -175,7 +171,7 @@ module.exports = function(env, args) {
       ]
     },
     plugins: [
-      ...iconFontPlugin,
+      ...iconSpritePlugin,
       new MiniCssExtractPlugin({
         filename: '[name].css',
         chunkFilename: '[id].css'
