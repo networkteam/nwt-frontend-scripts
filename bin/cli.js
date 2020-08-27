@@ -270,7 +270,11 @@ function runTest({ watch } = {}) {
 
   mochaWebpack.cwd(process.cwd());
   mochaWebpack.webpackConfig(require('../webpack.test')('development', argv));
-  mochaWebpack.addEntry(path.resolve(basePackagePathAbsolute(), './Resources/Private/Javascript/') + '/**/*.test.js');
+  mochaWebpack.addEntry(
+    path.resolve(
+      basePackagePathAbsolute(),
+      './Resources/Private/{Javascript,Components/**/__Tests__/}/') + '/**/*.test.js'
+  );
 
   mochaWebpack.reporter(combinedReporter(reportDirectory));
 
