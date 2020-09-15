@@ -4,7 +4,7 @@ A webpack based workflow to create frontend-assets.
 ## Features
 * Browser-Ready Javascript from ESNext-Modules
 * CSS-Generation from SCSS with autoprefixer
-* Icon-Font Generation from SVG files
+* Icon-Sprite Generation from SVG files
 * Asset-Resolver and copier
 
 ## Getting started
@@ -65,7 +65,7 @@ This workflow automatically provides aliases for an easier import from different
 
 ## Icon Sprite
 
-Every SVG-File located in `%BASEROOT%/Resources/Private/Icons` will be included in an automatically generated Svgsprite. The Font-Files will be stored in `%BASEROOT%/Resources/Public/Dist` and a SCSS-File can be found in `%BASEROOT%/Resources/Private/Scss/_sprite.scss`. This SCSS-File includes the mixins to use the icon on every element (`@include sprite(%FILENAME%)`) although this is way is not encouraged due to repeated server requests.
+Every SVG-File located in `%BASEROOT%/Resources/Private/Icons` will be included in an automatically generated Svgsprite. The sprite itself will be stored in `%BASEROOT%/Resources/Public/Dist` and a SCSS-File can be found in `%BASEROOT%/Resources/Private/Scss/_sprite.scss`. This SCSS-File includes the mixins to use the icon on every element (`@include sprite(%FILENAME%)`) although this way is not encouraged due to repeated server requests.
 
 To prevent Iconsprite from being built, use the `--noIconSprite` Flag in your npm tasks
 
