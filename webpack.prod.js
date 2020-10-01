@@ -9,6 +9,7 @@ module.exports = function(env, args) {
     // Do not expose sources, but include source maps especially for JS stack traces
     devtool: 'nosources-source-map',
     optimization: {
+      minimize: true,
       minimizer: [
         new TerserPlugin({
           terserOptions: {
