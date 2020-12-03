@@ -14,22 +14,27 @@ To use this workflow in your projects, install the package with npm or yarn
 ```bash
 npm install @networkteam/frontend-scripts
 ```
+Add a `.env` file with the variables:
 
-Add BasePackageName and copy the scripts to your package.json:
+```env
+BASE_PACKAGE_NAME=Base.Package.Name
+SITE_PACKAGE_NAME=Site.Package.Name
+```
+
+Copy the scripts to your package.json:
 
 ```json
-  "basePackageName": "Customer.Base",
   "scripts": {
     "build": "npm run webpack",
     "build:dev": "npm run webpack:dev",
     "start": "npm run webpack:watch",
     "test": "npm run webpack:test",
     "test-watch": "npm run webpack:test-watch",
-    "webpack": "networkteam-asset-build prod --basePackage $npm_package_basePackageName",
-    "webpack:dev": "networkteam-asset-build dev --basePackage $npm_package_basePackageName",
-    "webpack:watch": "networkteam-asset-build watch --basePackage $npm_package_basePackageName",
-    "webpack:test": "networkteam-asset-build test --basePackage $npm_package_basePackageName",
-    "webpack:test-watch": "networkteam-asset-build test-watch --basePackage $npm_package_basePackageName"
+    "webpack": "networkteam-asset-build prod",
+    "webpack:dev": "networkteam-asset-build dev",
+    "webpack:watch": "networkteam-asset-build watch",
+    "webpack:test": "networkteam-asset-build test",
+    "webpack:test-watch": "networkteam-asset-build test-watch"
   },
 ```
 

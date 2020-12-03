@@ -1,3 +1,4 @@
+require('dotenv').config()
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const SVGSpritemapPlugin = require('svg-spritemap-webpack-plugin');
@@ -7,7 +8,8 @@ const hashdirectory = require('hashdirectory');
 
 module.exports = function(env, args) {
   const mode = args.mode;
-  const basePackageName = args['basePackage'];
+  const basePackageName = process.env['BASE_PACKAGE_NAME'];
+  const sitePackageName = process.env['SITE_PACKAGE_NAME'];
   const projectType = args['projectType'];
   const generateIconFont = args['noIconSprite'] ? false : true;
   const isNeos = projectType === 'neos';
@@ -63,7 +65,11 @@ module.exports = function(env, args) {
     },
     output: {
       path: path.resolve('./Resources/Public/Dist'),
-      filename: '[name].js'
+      filename: '[name].js',
+      chunkFilename: "[name].js",
+      jsonpFunction: "mainJsJsonpFunction",
+      publicPath:
+        `/_Resources/Static/Packages/${sitePackageName}/Dist/`,
     },
     resolve: {
       alias: baseAlias,
