@@ -3,7 +3,8 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const SVGSpritemapPlugin = require('svg-spritemap-webpack-plugin');
 const deepmerge = require('deepmerge');
-const hashdirectory = require('hashdirectory');
+const { DefinePlugin } = require( 'webpack' );
+const getClientEnv = require('./helpers/clientEnv');
 
 
 module.exports = function(env, args) {
@@ -15,6 +16,7 @@ module.exports = function(env, args) {
   const isNeos = projectType === 'neos';
   const isTypo3 = projectType === 'typo3';
   const customerName = basePackageName.split('.')[0]
+  const clientEnv = getClientEnv({CUSTOMER_NAME: customerName});
 
   const basePackagePathAbsolute = () => path.resolve(process.cwd(), `../${basePackageName}`);
   const iconPath = path.resolve(`${basePackagePathAbsolute()}/Resources/Private/Icons/`);
@@ -187,7 +189,8 @@ module.exports = function(env, args) {
       new MiniCssExtractPlugin({
         filename: '[name].css',
         chunkFilename: '[id].css'
-      })
+      }),
+      new DefinePlugin(clientEnv.stringified)
     ],
     resolveLoader: {
       modules: [
