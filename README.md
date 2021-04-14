@@ -76,7 +76,7 @@ To prevent Iconsprite from being built, use the `--noIconSprite` Flag in your np
 
 ## Environment Variables
 
-By default the scripts pass two environment variables to use in your code: NODE_ENV and CUSTOMER_NAME, that cann be accessed via process.env. If you need additional variables e.g. to define an api endpoint, you have to prefix this variable with `NWT_APP_`.
+By default the scripts pass two environment variables to use in your code: NODE_ENV and CUSTOMER_NAME, that can be accessed via process.env. If you need additional variables e.g. to define an api endpoint, you have to prefix this variable with `NWT_APP_`.
 
 ```
 .env
