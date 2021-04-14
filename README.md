@@ -74,6 +74,19 @@ Every SVG-File located in `%BASEROOT%/Resources/Private/Icons` will be included 
 
 To prevent Iconsprite from being built, use the `--noIconSprite` Flag in your npm tasks
 
+## Environment Variables
+
+By default the scripts pass two environment variables to use in your code: NODE_ENV and CUSTOMER_NAME, that cann be accessed via process.env. If you need additional variables e.g. to define an api endpoint, you have to prefix this variable with `NWT_APP_`.
+
+```
+.env
+
+NWT_APP_ENDPOINT = http://localhost:3000
+
+api.js
+const endpoint = process.env.NWT_APP_ENDPOINT
+```
+
 ## Add own configuration
 
 If you need a special configuration for your Project, you can add a custom webpack.js to your project root. It will be included automatically:
@@ -113,7 +126,44 @@ module.exports = {
 
 [See full configuration possibilities](https://github.com/Modernizr/Modernizr/blob/master/lib/config-all.json)
 
+## Usage in standalone projects
+
+The scripts are designed to work with a Neos or Typo3 folder structure, for the most parts it is also possible to use them in other projects. Therefore you have to define your base- and site-package as `.` in your .env-file
+
+```env
+BASE_PACKAGE_NAME=.
+SITE_PACKAGE_NAME=.
+```
+
+additionally you have to turn off the icon sprite generator, because it relies on a specific place, where the icons are stored. E.g. in your package.json
+
+
+```json
+  "scripts": {
+    "build": "npm run webpack --noIconSprite",
+  },
+```
+
+Also you might want to change the entry points and output paths via a custom webpack configuration (see above)
+
+```javascript
+module.exports = function () {
+  return {
+    entry: {
+      header: null,
+      footer: null,
+      main: "./src/index.js",
+      print: null,
+    },
+    output: {
+      path: './dist'
+    },
+  };
+};
+```
+
 ## Testing
+
 For unit testing create a file `${your-filename}.test.js` within your javascript folder.
 Webpack will watch for files within the javascript directory ending on `*.test.js`.
 Run your tests by simply start `npm run test`.
