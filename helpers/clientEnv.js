@@ -20,7 +20,6 @@ const getClientEnv = (additionalVars) => {
       return env;
     }, {}),
   };
-  console.log(raw)
   return { raw, stringified };
 }
 
