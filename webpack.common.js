@@ -1,13 +1,17 @@
 require('dotenv').config()
 const path = require('path');
+const fs = require('fs');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const SVGSpritemapPlugin = require('svg-spritemap-webpack-plugin');
 const deepmerge = require('deepmerge');
 const { DefinePlugin } = require( 'webpack' );
 const getClientEnv = require('./helpers/clientEnv');
+const MessageHelperPlugin =  require('./helpers/messageHelper')
+const ESLintPlugin = require('eslint-webpack-plugin');
+const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 
 
-module.exports = function(env, args) {
+module.exports = function(webpackEnv, args) {
   const mode = args.mode;
   const basePackageName = process.env['BASE_PACKAGE_NAME'];
   const sitePackageName = process.env['SITE_PACKAGE_NAME'];
@@ -17,6 +21,7 @@ module.exports = function(env, args) {
   const isTypo3 = projectType === 'typo3';
   const customerName = basePackageName.split('.')[0]
   const clientEnv = getClientEnv({CUSTOMER_NAME: customerName});
+  const isEnvDevelopment = webpackEnv === 'development';
 
   const basePackagePathAbsolute = () => path.resolve(process.cwd(), `../${basePackageName}`);
   const iconPath = path.resolve(`${basePackagePathAbsolute()}/Resources/Private/Icons/`);
@@ -69,7 +74,6 @@ module.exports = function(env, args) {
       path: path.resolve('./Resources/Public/Dist'),
       filename: '[name].js',
       chunkFilename: "[name].js",
-      jsonpFunction: "mainJsJsonpFunction",
       publicPath:
         `/_Resources/Static/Packages/${sitePackageName}/Dist/`,
     },
@@ -82,30 +86,6 @@ module.exports = function(env, args) {
     },
     module: {
       rules: [
-        // First, run the linter.
-        // It's important to do this before Babel processes the JS.
-        {
-          test: /\.(js|jsx)$/,
-          enforce: 'pre',
-          use: [
-            {
-              options: {
-                formatter: require.resolve('react-dev-utils/eslintFormatter'),
-                eslintPath: require.resolve('eslint'),
-                // @remove-on-eject-begin
-                baseConfig: {
-                  extends: [require.resolve('eslint-config-react-app')],
-                  settings: {react: {version: '999.999.999'}},
-                },
-                ignore: false,
-                useEslintrc: true
-                // @remove-on-eject-end
-              },
-              loader: require.resolve('eslint-loader')
-            }
-          ],
-          include: path.resolve('./Resources/Private/Javascript')
-        },
         {
           test: /modernizr\.js$/,
           loader: require.resolve('webpack-modernizr-loader'),
@@ -153,6 +133,32 @@ module.exports = function(env, args) {
           }]
         },
         {
+          test: /\.svg$/,
+          use: [
+            {
+              loader: '@svgr/webpack',
+              options: {
+                prettier: false,
+                svgo: false,
+                svgoConfig: {
+                  plugins: [{ removeViewBox: false }],
+                },
+                titleProp: true,
+                ref: true,
+              },
+            },
+            {
+              loader: 'file-loader',
+              options: {
+                name: 'static/media/[name].[hash].[ext]',
+              },
+            },
+          ],
+          issuer: {
+            and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
+          },
+        },
+        {
           test: /\.(sass|scss)$/,
           use: [
             MiniCssExtractPlugin.loader,
@@ -165,9 +171,11 @@ module.exports = function(env, args) {
             {
               loader: require.resolve('postcss-loader'),
               options: {
-                plugins: [
-                  require('autoprefixer')()
-                ],
+                postcssOptions: {
+                  plugins: [
+                    require('autoprefixer')()
+                  ],
+                },
                 sourceMap: true
               }
             },
@@ -185,12 +193,40 @@ module.exports = function(env, args) {
       ]
     },
     plugins: [
+      // Needed until create react app has updated to Webpack 5
+      new MessageHelperPlugin(),
+      // Generate better information on not found modules (not necessary)
+      // Not yet supported by WP5
+      // new ModuleNotFoundPlugin(process.cwd()),
       ...iconSpritePlugin,
       new MiniCssExtractPlugin({
         filename: '[name].css',
         chunkFilename: '[id].css'
       }),
-      new DefinePlugin(clientEnv.stringified)
+      new DefinePlugin(clientEnv.stringified),
+      new ESLintPlugin({
+        // Plugin options
+        extensions: ['js', 'mjs', 'jsx', 'ts', 'tsx'],
+        formatter: require.resolve('react-dev-utils/eslintFormatter'),
+        eslintPath: require.resolve('eslint'),
+        failOnError: true,
+        context: fs.realpathSync(process.cwd()),
+        cache: true,
+        cacheLocation: path.resolve(
+          'node_modules',
+          '.cache/.eslintcache'
+        ),
+        cwd: fs.realpathSync(process.cwd()),
+        fix: true,
+        resolvePluginsRelativeTo: __dirname,
+        useEslintrc: false,
+        baseConfig: {
+          extends: [require.resolve('eslint-config-react-app/base')],
+          rules: {
+              'react/react-in-jsx-scope': 'error',
+          },
+        },
+      }),
     ],
     resolveLoader: {
       modules: [

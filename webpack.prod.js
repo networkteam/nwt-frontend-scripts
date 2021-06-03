@@ -1,4 +1,4 @@
-const merge = require('webpack-merge');
+const {merge} = require('webpack-merge');
 const common = require('./webpack.common.js');
 
 const TerserPlugin = require('terser-webpack-plugin');
@@ -45,10 +45,7 @@ module.exports = function(env, args) {
               // https://github.com/facebook/create-react-app/issues/2488
               ascii_only: true,
             },
-          },
-          cache: true,
-          parallel: true,
-          sourceMap: true
+          }
         })
       ]
     }

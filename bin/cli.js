@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Code taken from https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/scripts/build.js
-
+require('dotenv').config()
 const chalk = require('chalk');
 const fs = require('fs-extra');
 const path = require('path');
@@ -186,7 +186,7 @@ function processWatch(environment) {
 
   const compiler = webpack(combinedConfiguration(environment, argv));
 
-  compiler.plugin('invalid', () => {
+  compiler.hooks.invalid.tap('invalid', () => {
     if (isInteractive) {
       clearConsole();
     }
@@ -195,7 +195,7 @@ function processWatch(environment) {
 
   // "done" event fires when Webpack has finished recompiling the bundle.
   // Whether or not you have warnings or errors, you will get this event.
-  compiler.plugin('done', (stats) => {
+  compiler.hooks.done.tap('done', (stats) => {
     if (isInteractive) {
       clearConsole();
     }
@@ -252,31 +252,45 @@ function processTestWatch() {
 }
 
 function runTest({ watch } = {}) {
-  const createMochaWebpack = require('mocha-webpack');
+  const createMochaWebpack = require('mochapack').default;
   const testHelper = require('../helpers/testHelper');
   const coverageHelper = require('../helpers/coverageHelper');
   const combinedReporter = require('../helpers/combinedTestReporter');
-
-  const mochaWebpack = createMochaWebpack();
-
   const reportDirectory = path.resolve(process.cwd(), './Resources/Private/Javascript/coverage');
-
-  const basePackagePathAbsolute = () =>  path.resolve(process.cwd(), `../${argv.basePackage}`);
+  const basePackageName = process.env['BASE_PACKAGE_NAME']
+  const basePackagePathAbsolute = () =>  path.resolve(process.cwd(), `../${basePackageName}`);
 
   testHelper.prepareTestEnvironment();
   if (!watch) {
     coverageHelper.prepareCoverageReporter();
   }
 
-  mochaWebpack.cwd(process.cwd());
-  mochaWebpack.webpackConfig(require('../webpack.test')('development', argv));
+  const mochaWebpack = createMochaWebpack({
+    mochapack: {
+      interactive: watch ? true : false,
+      clearTerminal: watch ? true : false
+    },
+    webpack: {
+      config: require('../webpack.test')('development', argv),
+      mode: 'development',
+    },
+    mocha: {
+      constructor: {
+        reporter: combinedReporter(reportDirectory),
+        ui: 'bdd'
+      },
+      cli: {
+        files: []
+      }
+
+    }
+  });
+
   mochaWebpack.addEntry(
     path.resolve(
       basePackagePathAbsolute(),
-      './Resources/Private/{Javascript,Components/**/__Tests__/}/') + '/**/*.test.js'
+      './Resources/Private/{Javascript,Components/**/__Tests__}/') + '/**/*.test.js'
   );
-
-  mochaWebpack.reporter(combinedReporter(reportDirectory));
 
   if (watch) {
     mochaWebpack.watch();

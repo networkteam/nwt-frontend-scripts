@@ -1,4 +1,4 @@
-const merge = require('webpack-merge');
+const {merge} = require('webpack-merge');
 const common = require('./webpack.common.js');
 const path = require('path');
 const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin');
@@ -46,7 +46,8 @@ module.exports = function(env, args) {
             "plugins": [
               [require.resolve("@babel/plugin-proposal-decorators"), {"legacy": true}],
               require.resolve("@babel/plugin-proposal-class-properties"),
-              require.resolve("@babel/plugin-proposal-object-rest-spread")
+              require.resolve("@babel/plugin-proposal-object-rest-spread"),
+              require.resolve("@babel/transform-runtime")
             ]
           }
         },
