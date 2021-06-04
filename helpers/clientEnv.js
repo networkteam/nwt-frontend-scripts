@@ -2,7 +2,7 @@ const NWT_APP = /^NWT_APP_/i;
 
 const getClientEnv = (additionalVars) => {
   const raw = Object.keys(process.env)
-    .filter(key => NWT_APP.test(key))
+    .filter((key) => NWT_APP.test(key))
     .reduce(
       (env, key) => {
         env[key] = process.env[key];
@@ -10,7 +10,7 @@ const getClientEnv = (additionalVars) => {
       },
       {
         NODE_ENV: process.env.NODE_ENV || 'development',
-        ...additionalVars
+        ...additionalVars,
       }
     );
   // Stringify all values so we can feed into webpack DefinePlugin
@@ -21,6 +21,6 @@ const getClientEnv = (additionalVars) => {
     }, {}),
   };
   return { raw, stringified };
-}
+};
 
 module.exports = getClientEnv;

@@ -1,9 +1,9 @@
-const {merge} = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const common = require('./webpack.common.js');
 
 const TerserPlugin = require('terser-webpack-plugin');
 
-module.exports = function(env, args) {
+module.exports = function (env, args) {
   args.mode = 'production';
   return merge(common(env, args), {
     // Do not expose sources, but include source maps especially for JS stack traces
@@ -45,9 +45,9 @@ module.exports = function(env, args) {
               // https://github.com/facebook/create-react-app/issues/2488
               ascii_only: true,
             },
-          }
-        })
-      ]
-    }
+          },
+        }),
+      ],
+    },
   });
 };
