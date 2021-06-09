@@ -2,12 +2,16 @@ const { merge } = require('webpack-merge');
 const common = require('./webpack.common.js');
 const path = require('path');
 const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin');
+const paths = require('./paths');
 
 module.exports = function (env, args) {
   const basePackageName = args['basePackage'];
   const basePackagePathAbsolute = () =>
     path.resolve(process.cwd(), `../${basePackageName}`);
-
+  const jsFolders = [
+    path.resolve(paths.misc.appPath, paths.sources.javascript),
+    path.resolve(basePackagePathAbsolute(), paths.sources.javascript),
+  ];
   return merge(common(env, args), {
     // CSS loaders need inline source maps to work correctly
     devtool: 'eval-source-map',
@@ -17,12 +21,7 @@ module.exports = function (env, args) {
       rules: [
         {
           test: /\.js?$/,
-          include: [
-            path.resolve('./Resources/Private/Javascript'),
-            path.resolve(
-              `${basePackagePathAbsolute()}/Resources/Private/Javascript`
-            ),
-          ],
+          include: jsFolders,
           exclude: /node_modules/,
           loader: require.resolve('babel-loader'),
           options: {
@@ -90,10 +89,7 @@ module.exports = function (env, args) {
     },
     plugins: [
       new ExtraWatchWebpackPlugin({
-        dirs: [
-          './Resources/Private/JavaScript',
-          `${basePackagePathAbsolute()}/Resources/Private/JavaScript`,
-        ],
+        dirs: jsFolders,
       }),
     ],
   });

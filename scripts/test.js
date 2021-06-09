@@ -32,7 +32,7 @@ function runTest({ watch = false } = {}) {
       clearTerminal: watch,
     },
     webpack: {
-      config: require('../webpack.test')('production', argv),
+      config: require('../config/webpack.test')('production', argv),
       mode: 'production',
     },
     mocha: {

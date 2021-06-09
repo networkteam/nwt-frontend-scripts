@@ -5,10 +5,17 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const SVGSpritemapPlugin = require('svg-spritemap-webpack-plugin');
 const deepmerge = require('deepmerge');
 const { DefinePlugin } = require('webpack');
-const getClientEnv = require('./helpers/clientEnv');
-const MessageHelperPlugin = require('./helpers/messageHelper');
+const getCacheIdentifier = require('react-dev-utils/getCacheIdentifier');
+const getClientEnv = require('../helpers/clientEnv');
+const createEnvHash = require('../helpers/createEnvHash');
+const MessageHelperPlugin = require('../helpers/messageHelper');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const webpack = require('webpack');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
+const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
+const paths = require('./paths');
+const { modernizrBasePath } = require('./paths');
 
 module.exports = function (webpackEnv, args) {
   const mode = args.mode;
@@ -21,20 +28,17 @@ module.exports = function (webpackEnv, args) {
   const customerName = basePackageName.split('.')[0];
   const clientEnv = getClientEnv({ CUSTOMER_NAME: customerName });
   const isEnvDevelopment = webpackEnv === 'development';
-
   const basePackagePathAbsolute = () =>
     path.resolve(process.cwd(), `../${basePackageName}`);
   const iconPath = path.resolve(
-    `${basePackagePathAbsolute()}/Resources/Private/Icons/`
+    basePackagePathAbsolute(),
+    paths.sources.iconPath
   );
-  const modernizrBaseConfig = require(path.resolve(__dirname, '.modernizrrc'));
+  const modernizrBaseConfig = require(paths.sources.modernizrBasePath);
   let modernizrCustomConfig = {};
 
   try {
-    modernizrCustomConfig = require(path.resolve(
-      process.cwd(),
-      '.modernizrrc'
-    ));
+    modernizrCustomConfig = require(paths.sources.modernizrCustomPath);
   } catch (e) {}
 
   const iconSpritePlugin = generateIconFont
@@ -45,9 +49,10 @@ module.exports = function (webpackEnv, args) {
           },
           styles: {
             // Cannot use SCSS here because node-sass
-            filename: `${path.resolve(
-              basePackagePathAbsolute()
-            )}/Resources/Private/Scss/_Sprites.scss`,
+            filename: path.resolve(
+              basePackagePathAbsolute(),
+              paths.buildTargets.iconScss
+            ),
             variables: {
               sizes: 'spriteSize',
               variables: 'spriteVariables',
@@ -59,11 +64,17 @@ module.exports = function (webpackEnv, args) {
 
   const modernizrConfig = deepmerge(modernizrBaseConfig, modernizrCustomConfig);
   const baseAlias = {
-    baseJavascript: `${basePackagePathAbsolute()}/Resources/Private/Javascript`,
-    baseStyles: `${basePackagePathAbsolute()}/Resources/Private/Scss`,
-    baseComponents: `${basePackagePathAbsolute()}/Resources/Private/Components`,
-    rootPath: path.resolve(process.cwd(), '../../'),
-    modernizr$: path.resolve(__dirname, 'modernizr.js'),
+    baseJavascript: path.resolve(
+      basePackagePathAbsolute(),
+      paths.sources.javascript
+    ),
+    baseStyles: path.resolve(basePackagePathAbsolute(), paths.sources.styles),
+    baseComponents: path.resolve(
+      basePackagePathAbsolute(),
+      paths.sources.components
+    ),
+    rootPath: paths.misc.rootPath,
+    modernizr$: paths.misc.modernizr,
   };
 
   return {
@@ -75,21 +86,16 @@ module.exports = function (webpackEnv, args) {
     externals: {
       jquery: 'jQuery',
     },
-    entry: {
-      header: './Resources/Private/Javascript/header.js',
-      footer: './Resources/Private/Javascript/footer.js',
-      main: './Resources/Private/Scss/main.scss',
-      print: './Resources/Private/Scss/print.scss',
-    },
+    entry: paths.entries,
     output: {
-      path: path.resolve('./Resources/Public/Dist'),
+      path: paths.buildTargets.output,
       filename: '[name].js',
       chunkFilename: '[name].js',
       publicPath: `/_Resources/Static/Packages/${sitePackageName}/Dist/`,
     },
     resolve: {
       alias: baseAlias,
-      modules: [path.resolve('./node_modules'), 'node_modules'],
+      modules: paths.misc.modules,
     },
     module: {
       rules: [
@@ -99,6 +105,7 @@ module.exports = function (webpackEnv, args) {
           options: modernizrConfig,
         },
         {
+          // TODO:
           test: /\.js?$/,
           exclude: /@babel(?:\/|\\{1,2})runtime|pdfjs-dist/,
           loader: require.resolve('babel-loader'),
@@ -122,6 +129,12 @@ module.exports = function (webpackEnv, args) {
               ],
               require.resolve('@babel/preset-react'),
             ],
+            cacheDirectory: true,
+            cacheCompression: false,
+            cacheIdentifier: getCacheIdentifier(
+              isEnvDevelopment ? 'development' : 'production',
+              ['@babel/preset-react', 'react-dev-utils']
+            ),
             plugins: [
               [
                 require.resolve('@babel/plugin-proposal-decorators'),
@@ -208,10 +221,20 @@ module.exports = function (webpackEnv, args) {
       // Generate better information on not found modules (not necessary)
       // Not yet supported by WP5
       // new ModuleNotFoundPlugin(process.cwd()),
+      new CaseSensitivePathsPlugin(),
       ...iconSpritePlugin,
       new MiniCssExtractPlugin({
         filename: '[name].css',
         chunkFilename: '[id].css',
+      }),
+      // Moment.js is an extremely popular library that bundles large locale files
+      // by default due to how webpack interprets its code. This is a practical
+      // solution that requires the user to opt into importing specific locales.
+      // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
+      // You can remove this if you don't use Moment.js:
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^\.\/locale$/,
+        contextRegExp: /moment$/,
       }),
       new DefinePlugin(clientEnv.stringified),
       new ESLintPlugin({
@@ -222,10 +245,10 @@ module.exports = function (webpackEnv, args) {
         failOnError: true,
         context: fs.realpathSync(process.cwd()),
         cache: true,
-        cacheLocation: path.resolve('node_modules', '.cache/.eslintcache'),
+        cacheLocation: paths.caches.eslint,
         cwd: fs.realpathSync(process.cwd()),
         fix: true,
-        resolvePluginsRelativeTo: __dirname,
+        resolvePluginsRelativeTo: process.cwd(),
         useEslintrc: false,
         baseConfig: {
           extends: [require.resolve('eslint-config-react-app/base')],
@@ -237,9 +260,24 @@ module.exports = function (webpackEnv, args) {
     ],
     resolveLoader: {
       modules: [
+        //TODO: Do we need this?
         // this path is the correct one when building an external Neos Module.
         path.resolve(__dirname, './node_modules'),
       ],
+    },
+    cache: {
+      type: 'filesystem',
+      version: createEnvHash(clientEnv),
+      cacheDirectory: paths.caches.webpack,
+      store: 'pack',
+      buildDependencies: {
+        defaultWebpack: ['webpack/lib/'],
+        config: [__filename],
+        // TODO:
+        // tsconfig: [paths.appTsConfig, paths.appJsConfig].filter((f) =>
+        //   fs.existsSync(f)
+        // ),
+      },
     },
   };
 };

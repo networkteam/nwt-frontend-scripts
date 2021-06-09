@@ -25,7 +25,7 @@ function getOutputPath(environment) {
 }
 
 function buildCustomConfiguration(environment) {
-  const defaultConfiguration = require(`../webpack.${environment}`);
+  const defaultConfiguration = require(`../config/webpack.${environment}`);
   if (!hasOwnConfig()) {
     return defaultConfiguration;
   }
