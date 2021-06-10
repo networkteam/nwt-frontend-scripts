@@ -1,45 +1,70 @@
+// Env variables
 require('dotenv').config();
+
+// node functions and tools
 const path = require('path');
 const fs = require('fs');
+const deepmerge = require('deepmerge');
+const resolve = require('resolve');
+
+// Plugins
+const { DefinePlugin, IgnorePlugin } = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const SVGSpritemapPlugin = require('svg-spritemap-webpack-plugin');
-const deepmerge = require('deepmerge');
-const { DefinePlugin } = require('webpack');
+const ESLintPlugin = require('eslint-webpack-plugin');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const MessageHelperPlugin = require('../helpers/messageHelper');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
+const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
+
+// Helper
 const getCacheIdentifier = require('react-dev-utils/getCacheIdentifier');
 const getClientEnv = require('../helpers/clientEnv');
 const createEnvHash = require('../helpers/createEnvHash');
-const MessageHelperPlugin = require('../helpers/messageHelper');
-const ESLintPlugin = require('eslint-webpack-plugin');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const webpack = require('webpack');
-const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
-const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
+
 const paths = require('./paths');
-const { modernizrBasePath } = require('./paths');
+
+const basePackageName = process.env['BASE_PACKAGE_NAME'];
+const sitePackageName = process.env['SITE_PACKAGE_NAME'];
+const useTypeScript = fs.existsSync(paths.misc.tsConfig);
+const customerName = basePackageName.split('.')[0];
+const clientEnv = getClientEnv({ CUSTOMER_NAME: customerName });
+const basePackagePathAbsolute = () =>
+  path.resolve(process.cwd(), `../${basePackageName}`);
+const iconPath = path.resolve(
+  basePackagePathAbsolute(),
+  paths.sources.iconPath
+);
+const modernizrBaseConfig = require(paths.sources.modernizrBasePath);
+let modernizrCustomConfig = {};
+
+try {
+  modernizrCustomConfig = require(paths.sources.modernizrCustomPath);
+} catch (e) {}
+
+const modernizrConfig = deepmerge(modernizrBaseConfig, modernizrCustomConfig);
+const baseAlias = {
+  baseJavascript: path.resolve(
+    basePackagePathAbsolute(),
+    paths.sources.javascript
+  ),
+  baseStyles: path.resolve(basePackagePathAbsolute(), paths.sources.styles),
+  baseComponents: path.resolve(
+    basePackagePathAbsolute(),
+    paths.sources.components
+  ),
+  rootPath: paths.misc.rootPath,
+  modernizr$: paths.misc.modernizr,
+};
 
 module.exports = function (webpackEnv, args) {
   const mode = args.mode;
-  const basePackageName = process.env['BASE_PACKAGE_NAME'];
-  const sitePackageName = process.env['SITE_PACKAGE_NAME'];
   const projectType = args['projectType'];
   const generateIconFont = args['noIconSprite'] ? false : true;
   const isNeos = projectType === 'neos';
   const isTypo3 = projectType === 'typo3';
-  const customerName = basePackageName.split('.')[0];
-  const clientEnv = getClientEnv({ CUSTOMER_NAME: customerName });
   const isEnvDevelopment = webpackEnv === 'development';
-  const basePackagePathAbsolute = () =>
-    path.resolve(process.cwd(), `../${basePackageName}`);
-  const iconPath = path.resolve(
-    basePackagePathAbsolute(),
-    paths.sources.iconPath
-  );
-  const modernizrBaseConfig = require(paths.sources.modernizrBasePath);
-  let modernizrCustomConfig = {};
-
-  try {
-    modernizrCustomConfig = require(paths.sources.modernizrCustomPath);
-  } catch (e) {}
 
   const iconSpritePlugin = generateIconFont
     ? [
@@ -61,21 +86,6 @@ module.exports = function (webpackEnv, args) {
         }),
       ]
     : [];
-
-  const modernizrConfig = deepmerge(modernizrBaseConfig, modernizrCustomConfig);
-  const baseAlias = {
-    baseJavascript: path.resolve(
-      basePackagePathAbsolute(),
-      paths.sources.javascript
-    ),
-    baseStyles: path.resolve(basePackagePathAbsolute(), paths.sources.styles),
-    baseComponents: path.resolve(
-      basePackagePathAbsolute(),
-      paths.sources.components
-    ),
-    rootPath: paths.misc.rootPath,
-    modernizr$: paths.misc.modernizr,
-  };
 
   return {
     mode: mode,
@@ -105,8 +115,7 @@ module.exports = function (webpackEnv, args) {
           options: modernizrConfig,
         },
         {
-          // TODO:
-          test: /\.js?$/,
+          test: /\.(js|mjs|jsx|ts|tsx)$/,
           exclude: /@babel(?:\/|\\{1,2})runtime|pdfjs-dist/,
           loader: require.resolve('babel-loader'),
           options: {
@@ -232,7 +241,7 @@ module.exports = function (webpackEnv, args) {
       // solution that requires the user to opt into importing specific locales.
       // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
       // You can remove this if you don't use Moment.js:
-      new webpack.IgnorePlugin({
+      new IgnorePlugin({
         resourceRegExp: /^\.\/locale$/,
         contextRegExp: /moment$/,
       }),
@@ -257,7 +266,35 @@ module.exports = function (webpackEnv, args) {
           },
         },
       }),
-    ],
+      useTypeScript &&
+        new ForkTsCheckerWebpackPlugin({
+          async: isEnvDevelopment,
+          typescript: {
+            typescriptPath: resolve.sync('typescript', {
+              basedir: paths.sources.appNodeModules,
+            }),
+            configOverwrite: {
+              compilerOptions: {
+                sourceMap: isEnvDevelopment,
+                skipLibCheck: true,
+                inlineSourceMap: false,
+                declarationMap: false,
+                noEmit: true,
+                incremental: true,
+                tsBuildInfoFile: paths.misc.tsBuildInfoFile,
+              },
+            },
+            context: paths.sources.srcFolder,
+            diagnosticOptions: {
+              syntactic: true,
+            },
+            mode: 'write-references',
+          },
+          logger: {
+            infrastructure: 'silent',
+          },
+        }),
+    ].filter(Boolean),
     resolveLoader: {
       modules: [
         //TODO: Do we need this?
@@ -273,10 +310,9 @@ module.exports = function (webpackEnv, args) {
       buildDependencies: {
         defaultWebpack: ['webpack/lib/'],
         config: [__filename],
-        // TODO:
-        // tsconfig: [paths.appTsConfig, paths.appJsConfig].filter((f) =>
-        //   fs.existsSync(f)
-        // ),
+        tsconfig: [paths.misc.tsConfig, paths.misc.jsConfig].filter((f) =>
+          fs.existsSync(f)
+        ),
       },
     },
   };

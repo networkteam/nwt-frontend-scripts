@@ -1,14 +1,15 @@
 const path = require('path');
 const chalk = require('chalk');
 require('dotenv').config();
+const { verifyTypeScriptSetup } = require('../helpers/typescript');
 
 const argv = require('minimist')(process.argv.slice(3));
 
-function processTest(options) {
-  runTest(options);
+async function processTest(options) {
+  await runTest(options);
 }
 
-function runTest({ watch = false } = {}) {
+async function runTest({ watch = false } = {}) {
   const createMochaWebpack = require('mochapack').default;
   const testHelper = require('../helpers/testHelper');
   const coverageHelper = require('../helpers/coverageHelper');
@@ -20,7 +21,7 @@ function runTest({ watch = false } = {}) {
   const basePackageName = process.env['BASE_PACKAGE_NAME'];
   const basePackagePathAbsolute = () =>
     path.resolve(process.cwd(), `../${basePackageName}`);
-
+  await verifyTypeScriptSetup();
   testHelper.prepareTestEnvironment();
   if (!watch) {
     coverageHelper.prepareCoverageReporter();

@@ -1,8 +1,13 @@
 const { merge } = require('webpack-merge');
 const common = require('./webpack.common.js');
 const path = require('path');
+const fs = require('fs');
+const resolve = require('resolve');
 const ExtraWatchWebpackPlugin = require('extra-watch-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const paths = require('./paths');
+
+const useTypeScript = fs.existsSync(paths.misc.tsConfig);
 
 module.exports = function (env, args) {
   const basePackageName = args['basePackage'];
@@ -20,7 +25,7 @@ module.exports = function (env, args) {
     module: {
       rules: [
         {
-          test: /\.js?$/,
+          test: /\.(js|mjs|jsx|ts|tsx)?$/,
           include: jsFolders,
           exclude: /node_modules/,
           loader: require.resolve('babel-loader'),
@@ -91,6 +96,34 @@ module.exports = function (env, args) {
       new ExtraWatchWebpackPlugin({
         dirs: jsFolders,
       }),
-    ],
+      useTypeScript &&
+        new ForkTsCheckerWebpackPlugin({
+          async: true,
+          typescript: {
+            typescriptPath: resolve.sync('typescript', {
+              basedir: paths.sources.appNodeModules,
+            }),
+            configOverwrite: {
+              compilerOptions: {
+                sourceMap: true,
+                skipLibCheck: true,
+                inlineSourceMap: false,
+                declarationMap: false,
+                noEmit: true,
+                incremental: true,
+                tsBuildInfoFile: paths.misc.tsBuildInfoFile,
+              },
+            },
+            context: paths.sources.srcFolder,
+            diagnosticOptions: {
+              syntactic: true,
+            },
+            mode: 'write-references',
+          },
+          logger: {
+            infrastructure: 'silent',
+          },
+        }),
+    ].filter(Boolean),
   });
 };

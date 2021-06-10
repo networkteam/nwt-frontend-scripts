@@ -2,11 +2,13 @@ const chalk = require('chalk');
 const clearConsole = require('react-dev-utils/clearConsole');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const configHelpers = require('../helpers/configHelpers');
+const { verifyTypeScriptSetup } = require('../helpers/typescript');
 
 const argv = require('minimist')(process.argv.slice(3));
 const isInteractive = process.stdout.isTTY;
 
-function processWatch(environment) {
+async function processWatch(environment) {
+  await verifyTypeScriptSetup();
   const webpack = require('webpack');
 
   const combinedConfiguration =

@@ -4,6 +4,7 @@ const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
 const printBuildError = require('react-dev-utils/printBuildError');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const configHelpers = require('../helpers/configHelpers');
+const { verifyTypeScriptSetup } = require('../helpers/typescript');
 
 const argv = require('minimist')(process.argv.slice(3));
 const measureFileSizesBeforeBuild =
@@ -13,7 +14,8 @@ const printFileSizesAfterBuild = FileSizeReporter.printFileSizesAfterBuild;
 const WARN_AFTER_BUNDLE_GZIP_SIZE = 512 * 1024;
 const WARN_AFTER_CHUNK_GZIP_SIZE = 1024 * 1024;
 
-function processBuild(environment) {
+async function processBuild(environment) {
+  await verifyTypeScriptSetup();
   const webpackBuildPath = configHelpers.getOutputPath();
 
   measureFileSizesBeforeBuild(webpackBuildPath)
@@ -57,14 +59,14 @@ function processBuild(environment) {
       (err) => {
         console.log(chalk.red('Failed to compile.\n'));
         printBuildError(err);
-        process.exit(1);
+        throw new Error('Failed to compile.');
       }
     )
     .catch((err) => {
       if (err && err.message) {
         console.log(err.message);
       }
-      process.exit(1);
+      throw new Error('Failed to compile.');
     });
 }
 

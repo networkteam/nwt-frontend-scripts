@@ -5,6 +5,8 @@ const appPath = fs.realpathSync(process.cwd());
 const resolveAppPath = (relativePath) => path.resolve(appPath, relativePath);
 const resolveConfigPath = (relativePath) =>
   path.resolve(__dirname, relativePath);
+const rootPath = resolveAppPath('../../');
+const resolveRootPath = (relativePath) => path.resolve(rootPath, relativePath);
 
 const entries = {
   header: resolveAppPath('./Resources/Private/Javascript/header.js'),
@@ -22,6 +24,10 @@ const misc = {
   rootPath: resolveAppPath('../../'),
   modernizr: resolveConfigPath('modernizr.js'),
   modules: [path.resolve('./node_modules'), 'node_modules'],
+  tsConfig: resolveAppPath('tsconfig.json'),
+  jsConfig: resolveAppPath('jsconfig.json'),
+  tsBuildInfoFile: resolveAppPath('node_modules/.cache/tsconfig.tsbuildinfo'),
+  yarnLockFile: resolveAppPath('yarn.lock'),
   appPath,
 };
 
@@ -32,6 +38,8 @@ const sources = {
   javascript: './Resources/Private/Javascript',
   styles: './Resources/Private/Scss',
   components: './Resources/Private/Components',
+  appNodeModules: resolveAppPath('node_modules'),
+  srcFolder: resolveRootPath('./DistributionPackages'),
 };
 
 const buildTargets = {
