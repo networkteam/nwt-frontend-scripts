@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { merge } = require('webpack-merge');
+const { mergeWithCustomize } = require('webpack-merge');
 
 const argv = require('minimist')(process.argv.slice(3));
 
@@ -32,7 +32,7 @@ function buildCustomConfiguration(environment) {
   const customConfig = getCustomWebpackConfiguration();
 
   return function (env, args) {
-    return merge({
+    return mergeWithCustomize({
       customizeObject(a, b, key) {
         if (key === 'entry') {
           Object.keys(a).forEach((key) => {
