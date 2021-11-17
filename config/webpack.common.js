@@ -106,6 +106,7 @@ module.exports = function (webpackEnv, args) {
     resolve: {
       alias: baseAlias,
       modules: paths.misc.modules,
+      extensions: ['.ts', '.tsx', '.js', '.jsx']
     },
     module: {
       rules: [
@@ -137,6 +138,7 @@ module.exports = function (webpackEnv, args) {
                 },
               ],
               require.resolve('@babel/preset-react'),
+              require.resolve('@babel/preset-typescript'),
             ],
             cacheDirectory: true,
             cacheCompression: false,
