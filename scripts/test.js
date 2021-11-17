@@ -51,7 +51,7 @@ async function runTest({ watch = false } = {}) {
     path.resolve(
       basePackagePathAbsolute(),
       './Resources/Private/{Javascript,Components/**/__Tests__}/'
-    ) + '/**/*.test.js'
+    ) + '/**/*.test.(js|ts)'
   );
 
   if (watch) {

@@ -48,6 +48,7 @@ module.exports = function (env, args) {
                 },
               ],
               require.resolve('@babel/preset-react'),
+              require.resolve('@babel/preset-typescript'),
             ],
             plugins: [
               [
