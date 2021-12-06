@@ -101,7 +101,7 @@ module.exports = function(env, args) {
 };
 ```
 
-If you want to adapt predefined rules or add new ones you may do so by matching `test`-expression:
+If you want to adapt predefined rules and merge them to one, you may do so by matching `test`-expression:
 
 ```Javascript
 module.exports = function(env, args) {
@@ -109,7 +109,7 @@ module.exports = function(env, args) {
     module: {
       rules: [
         {
-          test: /\.(sass|scss)$/,  // use same expression if you want to modify rule
+          test: /\.(sass|scss)$/,  // use same expression used by plugin to merge
           ...
         }
       ]
