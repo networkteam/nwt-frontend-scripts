@@ -32,7 +32,16 @@ function buildCustomConfiguration(environment) {
   const customConfig = getCustomWebpackConfiguration();
 
   return function (env, args) {
-    return mergeWithCustomize({
+    return mergeWithRules({
+      module: {
+        rules : {
+          test: "match",
+          use: {
+            loader: "match",
+            options: "replace"
+          }
+        }
+      },
       customizeObject(a, b, key) {
         if (key === 'entry') {
           Object.keys(a).forEach((key) => {
