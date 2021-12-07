@@ -101,6 +101,23 @@ module.exports = function(env, args) {
 };
 ```
 
+If you want to adapt predefined rules and merge them to one, you may do so by matching `test`-expression:
+
+```Javascript
+module.exports = function(env, args) {
+  return {
+    module: {
+      rules: [
+        {
+          test: /\.(sass|scss)$/,  // use same expression used by plugin to merge
+          ...
+        }
+      ]
+    },
+  };
+};
+```
+
 To remove entry points from webpack, you can set them to null in your own configuration
 
 ## Using modernizr
