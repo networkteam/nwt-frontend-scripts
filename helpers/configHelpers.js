@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { mergeWithCustomize } = require('webpack-merge');
+const { mergeWithRules, CustomizeRule } = require('webpack-merge');
 
 const argv = require('minimist')(process.argv.slice(3));
 
@@ -13,6 +13,26 @@ function getCustomWebpackConfiguration() {
   return hasOwnConfig()
     ? require(path.resolve(process.cwd(), 'webpack.js'))
     : null;
+}
+/**
+ * takes two configs and compares their keys and values
+ * currently supports entrypoints
+ * @param {object} dc default configuration in current environment
+ * @param {object} cc custom configuration from project in current environment
+ * @returns {Array} Default and custom configuration for merging
+ */
+function checkForRemovedKeys(dc, cc) {
+  if (cc.entry) {
+    Object.keys(dc.entry).forEach((key) => {
+      const isUnset = cc.entry[key] !== undefined && !cc.entry[key];
+      if (isUnset) {
+        delete dc.entry[key];
+        delete cc.entry[key];
+      }
+    });
+  }
+
+  return [dc, cc]
 }
 
 function getOutputPath(environment) {
@@ -32,29 +52,18 @@ function buildCustomConfiguration(environment) {
   const customConfig = getCustomWebpackConfiguration();
 
   return function (env, args) {
+    const [defaultConf, customConf] = checkForRemovedKeys(defaultConfiguration(env, args), customConfig(env, args));
     return mergeWithRules({
       module: {
-        rules : {
-          test: "match",
+        rules: {
+          test: CustomizeRule.Match,
           use: {
             loader: "match",
             options: "replace"
           }
         }
-      },
-      customizeObject(a, b, key) {
-        if (key === 'entry') {
-          Object.keys(a).forEach((key) => {
-            if (b[key] !== undefined && !b[key]) {
-              delete a[key];
-              delete b[key];
-            }
-          });
-        }
-
-        return undefined;
-      },
-    })(defaultConfiguration(env, args), customConfig(env, args));
+      }
+    })(defaultConf, customConf);
   };
 }
 
