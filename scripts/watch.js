@@ -12,7 +12,7 @@ async function processWatch(environment) {
   const webpack = require('webpack');
 
   const combinedConfiguration =
-    configHelpers.buildCustomConfiguration(environment);
+    configHelpers.buildCombinedConfiguration(environment);
   const compiler = webpack(combinedConfiguration(environment, argv));
 
   compiler.hooks.invalid.tap('invalid', () => {
