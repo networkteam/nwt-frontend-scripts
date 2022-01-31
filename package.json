@@ -36,6 +36,7 @@
     "chai": "^4.2.0",
     "chai-dom": "^1.8.1",
     "chalk": "^4.1.1",
+    "compression-webpack-plugin": "6",
     "crypto": "^1.0.1",
     "css-loader": "^5.2.5",
     "deepmerge": "^4.2.2",
