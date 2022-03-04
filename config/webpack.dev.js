@@ -12,5 +12,10 @@ module.exports = function (env, args) {
         appendScriptTag: true,
       }),
     ],
+    cache: {
+      buildDependencies: {
+        config: [__filename],
+      },
+    },
   });
 };
