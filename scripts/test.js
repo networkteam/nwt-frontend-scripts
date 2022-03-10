@@ -18,7 +18,7 @@ async function runTest({ watch = false } = {}) {
     process.cwd(),
     './Resources/Private/Javascript/coverage'
   );
-  const basePackageName = process.env['BASE_PACKAGE_NAME'];
+  const basePackageName = process.env['npm_config_basePackageName'];
   const basePackagePathAbsolute = () =>
     path.resolve(process.cwd(), `../${basePackageName}`);
   await verifyTypeScriptSetup();

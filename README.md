@@ -14,11 +14,14 @@ To use this workflow in your projects, install the package with npm or yarn
 ```bash
 npm install @networkteam/frontend-scripts
 ```
-Add a `.env` file with the variables:
 
-```env
-BASE_PACKAGE_NAME=Base.Package.Name
-SITE_PACKAGE_NAME=Site.Package.Name
+Define variables in your `package.json`:
+
+```json
+{
+  "basePackageName": "Customer.Base",
+  "sitePackageName": "Customer.Site"
+}
 ```
 
 Copy the scripts to your package.json:
@@ -145,14 +148,16 @@ module.exports = {
 
 ## Usage in standalone projects
 
-The scripts are designed to work with a Neos or Typo3 folder structure, for the most parts it is also possible to use them in other projects. Therefore you have to define your base- and site-package as `.` in your .env-file
+The scripts are designed to work with a Neos or Typo3 folder structure, for the most parts it is also possible to use them in other projects. Therefore you have to define your base- and site-package as `.` in your package.json
 
-```env
-BASE_PACKAGE_NAME=.
-SITE_PACKAGE_NAME=.
+```json
+{
+  "basePackageName": ".",
+  "sitePackageName": "."
+}
 ```
 
-additionally you have to turn off the icon sprite generator, because it relies on a specific place, where the icons are stored. E.g. in your package.json
+Additionally you have to turn off the icon sprite generator, because it relies on a specific place, where the icons are stored. E.g. in your package.json
 
 
 ```json
@@ -161,7 +166,7 @@ additionally you have to turn off the icon sprite generator, because it relies o
   },
 ```
 
-Also you might want to change the entry points and output paths via a custom webpack configuration (see above)
+Also, you might want to change the entry points and output paths via a custom webpack configuration (see above)
 
 ```javascript
 module.exports = function () {
