@@ -126,5 +126,10 @@ module.exports = function (env, args) {
           },
         }),
     ].filter(Boolean),
+    cache: {
+      buildDependencies: {
+        config: [__filename],
+      },
+    },
   });
 };

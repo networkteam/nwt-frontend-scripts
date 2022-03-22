@@ -107,10 +107,12 @@ function build(environment, previousFileSizes) {
         return reject(new Error(messages.warnings.join('\n\n')));
       }
 
-      return resolve({
-        stats,
-        previousFileSizes,
-        warnings: messages.warnings,
+      compiler.close(() => {
+        return resolve({
+          stats,
+          previousFileSizes,
+          warnings: messages.warnings,
+        });
       });
     });
   });
