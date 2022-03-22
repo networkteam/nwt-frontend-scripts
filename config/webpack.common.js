@@ -216,9 +216,10 @@ module.exports = function (webpackEnv, args) {
             {
               loader: require.resolve('sass-loader'),
               options: {
+                implementation: require.resolve("sass"),
                 sourceMap: true,
                 sassOptions: {
-                  outputStyle: mode === 'production' ? 'compressed' : 'nested',
+                  outputStyle: mode === 'production' ? 'compressed' : 'expanded',
                 },
               },
             },
