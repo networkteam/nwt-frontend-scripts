@@ -25,8 +25,8 @@ const createEnvHash = require('../helpers/createEnvHash');
 
 const paths = require('./paths');
 
-const basePackageName = process.env['npm_package_basePackageName'];
-const sitePackageName = process.env['npm_package_sitePackageName'];
+const basePackageName = process.env['npm_package_basePackageName'] || process.env['BASE_PACKAGE_NAME'];
+const sitePackageName = process.env['npm_package_sitePackageName'] || process.env['SITE_PACKAGE_NAME'];
 const useTypeScript = fs.existsSync(paths.misc.tsConfig);
 const customerName = basePackageName.split('.')[0];
 const clientEnv = getClientEnv({ CUSTOMER_NAME: customerName });
