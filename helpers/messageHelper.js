@@ -15,13 +15,13 @@ class FixMessageFormatterPlugin {
                 stats.hooks.result
                     .for('error')
                     .tap('FixMessageFormatterPlugin', (obj, data, ctx) =>
-                        formatError(obj, 'ERROR'),
+                        formatError(obj, `ERROR in ${obj.file}}`),
                     );
 
                 stats.hooks.result
                     .for('warning')
                     .tap('FixMessageFormatterPlugin', (obj, data, ctx) =>
-                        formatError(obj, 'WARNING'),
+                        formatError(obj, `WARNING in ${obj.file}}`),
                     );
             });
         });
