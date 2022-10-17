@@ -73,7 +73,6 @@ module.exports = function (webpackEnv, args) {
             filename: `${customerName}-iconsprite.svg`,
           },
           styles: {
-            // Cannot use SCSS here because node-sass
             filename: path.resolve(
               basePackagePathAbsolute(),
               paths.buildTargets.iconScss
@@ -287,7 +286,6 @@ module.exports = function (webpackEnv, args) {
                 tsBuildInfoFile: paths.misc.tsBuildInfoFile,
               },
             },
-            context: paths.sources.srcFolder,
             diagnosticOptions: {
               syntactic: true,
             },
