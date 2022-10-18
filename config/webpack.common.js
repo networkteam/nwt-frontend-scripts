@@ -36,6 +36,10 @@ const iconPath = path.resolve(
   basePackagePathAbsolute(),
   paths.sources.iconPath
 );
+const tsConfigPath = path.resolve(
+  basePackagePathAbsolute(),
+  paths.misc.tsConfig
+);
 const modernizrBaseConfig = require(paths.sources.modernizrBasePath);
 let modernizrCustomConfig = {};
 
@@ -271,10 +275,21 @@ module.exports = function (webpackEnv, args) {
       useTypeScript &&
         new ForkTsCheckerWebpackPlugin({
           async: isEnvDevelopment,
+          issue: {
+            exclude: (issue) => {
+              // ignore liniting errors from node modules
+              // we do not want to exclude node_modules from compilation
+              if (String(issue.file).includes('/node_modules/')) {
+                return true
+              }
+              return false
+            }
+          },
           typescript: {
             typescriptPath: resolve.sync('typescript', {
               basedir: paths.sources.appNodeModules,
             }),
+            configFile: tsConfigPath,
             configOverwrite: {
               compilerOptions: {
                 sourceMap: isEnvDevelopment,
