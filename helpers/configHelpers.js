@@ -17,16 +17,16 @@ function getCustomWebpackConfiguration() {
 /**
  * takes two (partial) configs and compares if a key was set to a non-undefined falsy value in the custom configuration
 
- * @param {object} dc default configuration in current environment
- * @param {object} cc custom configuration from project in current environment
+ * @param {object} defaultConfig default configuration in current environment
+ * @param {object} customConfig custom configuration from project in current environment
  */
-function deleteRemovedKeys(dc, cc) {
-  if (cc) {
-    Object.keys(dc).forEach((key) => {
-      const isUnset = cc[key] !== undefined && !cc[key];
+function deleteRemovedKeys(defaultConfig, customConfig) {
+  if (customConfig) {
+    Object.keys(defaultConfig).forEach((key) => {
+      const isUnset = customConfig[key] !== undefined && !customConfig[key];
       if (isUnset) {
-        delete dc[key];
-        delete cc[key];
+        delete defaultConfig[key];
+        delete customConfig[key];
       }
     });
   }
@@ -35,13 +35,13 @@ function deleteRemovedKeys(dc, cc) {
 /**
  * takes two (partial) webpack plugin configs and compares if a key was overwritten in custom config to then merge the otions to one plugin initialization
 
- * @param {object} dc default configuration in current environment
- * @param {object} cc custom configuration from project in current environment
+ * @param {object} defaultConfig default configuration in current environment
+ * @param {object} customConfig custom configuration from project in current environment
  * @returns {object, object} Default an Custom Configs with priority to custom config
  */
-function mergeConfigPlugins(dc, cc) {
-  let defaultConf = dc;
-  let customConf = cc;
+function mergeConfigPlugins(defaultConfig, customConfig) {
+  let defaultConf = defaultConfig;
+  let customConf = customConfig;
 
   if (customConf.plugins) {
     defaultConf.plugins =

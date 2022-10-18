@@ -286,6 +286,8 @@ module.exports = function (webpackEnv, args) {
                 tsBuildInfoFile: paths.misc.tsBuildInfoFile,
               },
             },
+            // resolves to project root/DistributionPackages
+            context: paths.sources.srcFolder,
             diagnosticOptions: {
               syntactic: true,
             },
