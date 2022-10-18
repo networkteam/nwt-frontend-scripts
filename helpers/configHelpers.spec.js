@@ -11,6 +11,12 @@ describe('configHelpers', function () {
     const mockSassLoader = function () {};
     const mockAutoprefixerPlugin = function () {};
 
+    class SVGSpritemapPlugin {
+      constructor(options) {
+        this.options = options;
+      }
+    }
+
     const defaultConfiguration = function (env, args) {
       const mode = args.mode;
       return {
@@ -56,6 +62,21 @@ describe('configHelpers', function () {
             },
           ],
         },
+        plugins: [
+          new SVGSpritemapPlugin({
+            output: {
+              filename: `iconsprite-frontend-scripts.svg`,
+            },
+            styles: {
+              filename: 'a path to a file',
+              variables: {
+                sizes: 'nwtSizes',
+                sprites: 'nwtSprites',
+                variables: 'nwtVariables',
+              },
+            },
+          }),
+        ],
       };
     };
 
@@ -120,6 +141,50 @@ describe('configHelpers', function () {
               plugins: [mockTailwindPlugin, mockAutoprefixerPlugin],
             },
             sourceMap: true,
+          },
+        });
+      });
+    });
+
+    describe('with existing plugin with overwritten config', function () {
+      const mockTailwindPlugin = function () {};
+
+      const customConfiguration = function (env, args) {
+        return {
+          plugins: [
+            new SVGSpritemapPlugin({
+              output: {
+                filename: `a different file name`,
+              },
+            }),
+          ],
+        };
+      };
+
+      it('replaces output filename and keeps rest of the config', function () {
+        const config = combineConfigurations(
+          defaultConfiguration,
+          customConfiguration
+        )('dev', { mode: 'development' });
+        console.log(
+          'lelele',
+          config.plugins[0].options.output.filename
+        );
+        expect(config.plugins).to.have.length(1);
+        expect(config.plugins[0].options.output.filename).to.equal(
+          'a different file name'
+        );
+        expect(config.plugins[0].options).to.deep.eq({
+          output: {
+            filename: `a different file name`,
+          },
+          styles: {
+            filename: 'a path to a file',
+            variables: {
+              sizes: 'nwtSizes',
+              sprites: 'nwtSprites',
+              variables: 'nwtVariables',
+            },
           },
         });
       });
