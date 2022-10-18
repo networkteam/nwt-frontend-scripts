@@ -33,7 +33,7 @@ function deleteRemovedKeys(defaultConfig, customConfig) {
 }
 
 /**
- * takes two (partial) webpack plugin configs and compares if a key was overwritten in custom config to then merge the otions to one plugin initialization
+ * merges plugins of customConfig in defaultConfig and deletes customConf.plugins afterwards, so that they are being initialized only once.
 
  * @param {object} defaultConfig default configuration in current environment
  * @param {object} customConfig custom configuration from project in current environment
