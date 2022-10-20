@@ -125,6 +125,8 @@ module.exports = function(env, args) {
 
 To remove entry points from webpack, you can set them to null in your own configuration
 
+When a plugin is defined in custom webpack config that is already defined in common.webpack.js it is treated as one plugin that takes the default config and merges config of custom Webpack-Plugin deeply into it. Deeply merging class constructors only goes so far. If a default value of any used plugin in custom webpack config is initialized then it will overwrite the value defined in default config.
+
 ## Using modernizr
 
 By default a modernizr custom build is generated with `setclasses` option and can be imported via
