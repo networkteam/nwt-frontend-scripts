@@ -77,7 +77,13 @@ This workflow automatically provides aliases for an easier import from different
 
 Every SVG-File located in `%BASEROOT%/Resources/Private/Icons` will be included in an automatically generated Svgsprite. The sprite itself will be stored in `%BASEROOT%/Resources/Public/Dist` and a SCSS-File can be found in `%BASEROOT%/Resources/Private/Scss/_sprite.scss`. This SCSS-File includes the mixins to use the icon on every element (`@include sprite(%FILENAME%)`) although this way is not encouraged due to repeated server requests.
 
-To prevent Iconsprite from being built, use the `--noIconSprite` Flag in your npm tasks
+To prevent Iconsprite from being built, use the `--noIconSprite` flag in your npm scripts. This might be useful when on projects where you don't want to do that for each build.
+
+## Live Reloading
+
+Hot or live reloading is supported by default in development mode. In certain projects it makes sense to disable live reloading and refresh the view manually (e.g. in forms).
+
+To disable live reloading, use the `--noLivereload` flag in your npm scripts.
 
 ## Environment Variables
 
