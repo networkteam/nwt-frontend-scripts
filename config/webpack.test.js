@@ -100,6 +100,16 @@ module.exports = function (env, args) {
       useTypeScript &&
         new ForkTsCheckerWebpackPlugin({
           async: true,
+          issue: {
+            exclude: (issue) => {
+              // ignore liniting errors from node modules
+              // we do not want to exclude node_modules from compilation
+              if (String(issue.file).includes('/node_modules/')) {
+                return true
+              }
+              return false
+            }
+          },
           typescript: {
             typescriptPath: resolve.sync('typescript', {
               basedir: paths.sources.appNodeModules,
@@ -122,7 +132,7 @@ module.exports = function (env, args) {
             mode: 'write-references',
           },
           logger: {
-            infrastructure: 'silent',
+            infrastructure: 'console',
           },
         }),
     ].filter(Boolean),
